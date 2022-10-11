@@ -3,10 +3,10 @@ import { structure } from './index'
 
 describe('semicolon', () => {
   describe('structure', () => {
-    test('returns an object with values', () => {
+    test('returns an object with values', async () => {
       const input = 'foo=bar;baz=bah'
-      const actual = structure(input)
-      expect(actual).resolves.toMatchObject({
+      const actual = await structure(input)
+      expect(actual).toMatchObject({
         foo: 'bar',
         baz: 'bah',
       })

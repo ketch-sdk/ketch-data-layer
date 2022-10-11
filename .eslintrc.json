@@ -21,11 +21,12 @@
   },
   "plugins": ["@typescript-eslint/eslint-plugin", "jest"],
   "rules": {
-    "no-empty-function": "off",
-    "@typescript-eslint/no-empty-function": "off",
-    "valid-jsdoc": "off",
-    "max-len": ["error", 120],
     "comma-dangle": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "max-len": ["error", 120],
+    "no-empty-function": "off",
+    "valid-jsdoc": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off"
   }
 }

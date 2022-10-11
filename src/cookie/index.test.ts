@@ -3,24 +3,24 @@ import { fetcher } from './index'
 
 describe('cookie', () => {
   describe('fetcher', () => {
-    test('returns value for a cookie', () => {
+    test('returns value for a cookie', async () => {
       const w = {
         document: {
           cookie: 'foo=bar; baz=bah',
         },
       } as Window
 
-      const actual = fetcher(w, 'foo')
-      expect(actual).resolves.toStrictEqual(['bar'])
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns empty list for a no', () => {
+    test('returns empty list for a no', async () => {
       const w = {
         document: {},
       } as Window
 
       const actual = fetcher(w, 'foo')
-      expect(actual).resolves.toStrictEqual([])
+      expect(actual).toStrictEqual([])
     })
   })
 })

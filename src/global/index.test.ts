@@ -9,45 +9,45 @@ declare global {
 
 describe('global', () => {
   describe('fetcher', () => {
-    test('returns value for a variable', () => {
+    test('returns value for a variable', async () => {
       const w = {} as Window
       w['foo'] = 'bar'
 
-      const actual = fetcher(w, 'foo')
-      expect(actual).resolves.toStrictEqual(['bar'])
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns value for nested variable', () => {
+    test('returns value for nested variable', async () => {
       const w = {} as Window
       w['foo'] = {
         foo: 'bar',
       }
 
-      const actual = fetcher(w, 'foo.foo')
-      expect(actual).resolves.toStrictEqual(['bar'])
+      const actual = await fetcher(w, 'foo.foo')
+      expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns empty for a null', () => {
+    test('returns empty for a null', async () => {
       const w = {} as Window
       w['foo'] = null
 
-      const actual = fetcher(w, 'foo')
-      expect(actual).resolves.toStrictEqual([])
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual([])
     })
 
-    test('returns empty for an undefined', () => {
+    test('returns empty for an undefined', async () => {
       const w = {} as Window
       w['foo'] = undefined
 
-      const actual = fetcher(w, 'foo')
-      expect(actual).resolves.toStrictEqual([])
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual([])
     })
 
-    test('returns empty for missing property', () => {
+    test('returns empty for missing property', async () => {
       const w = {} as Window
 
-      const actual = fetcher(w, 'foo')
-      expect(actual).resolves.toStrictEqual([])
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual([])
     })
   })
 })
