@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import {fetcher, structure} from './index'
+import { fetcher, structure } from './index'
 
 describe('queryString', () => {
   describe('fetcher', () => {
@@ -32,7 +32,6 @@ describe('queryString', () => {
       const actual = fetcher(w, 'foo')
       expect(actual).resolves.toEqual([])
     })
-
   })
 
   describe('structure', () => {

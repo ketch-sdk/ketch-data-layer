@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import {structure} from './index'
+import { structure } from './index'
 
 describe('string', () => {
   describe('structure', () => {

@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import {fetcher} from './index'
+import { fetcher } from './index'
 
 describe('cookie', () => {
   describe('fetcher', () => {

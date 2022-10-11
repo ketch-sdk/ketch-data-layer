@@ -1,13 +1,11 @@
 import { expect, test } from '@jest/globals'
-import {fetcher} from './index'
+import { fetcher } from './index'
 
 describe('dataLayer', () => {
   describe('fetcher', () => {
     test('returns value for a dataLayer', () => {
       const w = {
-        dataLayer: [
-          {'foo': 'bar'}
-        ],
+        dataLayer: [{ foo: 'bar' }],
       } as Window
 
       const actual = fetcher(w, 'foo')
@@ -16,9 +14,7 @@ describe('dataLayer', () => {
 
     test('returns empty for a mismatched dataLayer', () => {
       const w = {
-        dataLayer: [
-          {'bar': 'foo'}
-        ],
+        dataLayer: [{ bar: 'foo' }],
       } as Window
 
       const actual = fetcher(w, 'foo')
