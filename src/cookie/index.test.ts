@@ -19,7 +19,7 @@ describe('cookie', () => {
         document: {},
       } as Window
 
-      const actual = fetcher(w, 'foo')
+      const actual = await fetcher(w, 'foo')
       expect(actual).toStrictEqual([])
     })
   })
