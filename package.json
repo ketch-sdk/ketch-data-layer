@@ -1,0 +1,46 @@
+{
+  "name": "@ketch/data-layer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Ketch Data Layer interface",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build --source-map --license licenses.txt -o dist src/index.ts",
+    "format": "prettier --write '**/*.ts'",
+    "format-check": "prettier --check '**/*.ts'",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest",
+    "all": "npm run build && npm run format && npm run lint && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ketch-sdk/ketch-data-layer.git"
+  },
+  "homepage": "https://github.com/ketch-sdk/ketch-data-layer",
+  "bugs": {
+    "url": "https://github.com/ketch-sdk/ketch-data-layer/issues"
+  },
+  "keywords": [
+    "Ketch",
+    "dataLayer"
+  ],
+  "author": "Ketch Kloud, Inc.",
+  "license": "MIT",
+  "devDependencies": {
+    "@jest/globals": "^29.1.2",
+    "@types/jest": "^29.1.2",
+    "@types/node": "^18.7.13",
+    "@typescript-eslint/parser": "^5.35.1",
+    "@vercel/ncc": "^0.34.0",
+    "eslint": "^8.23.0",
+    "eslint-plugin-github": "^4.3.7",
+    "eslint-plugin-jest": "^27.0.1",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^29.1.2",
+    "jest-junit": "^14.0.1",
+    "js-yaml": "^4.1.0",
+    "prettier": "^2.7.1",
+    "ts-jest": "^28.0.8",
+    "typescript": "^4.8.2"
+  }
+}
