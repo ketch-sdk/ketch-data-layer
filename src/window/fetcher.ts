@@ -5,7 +5,7 @@ export default async function windowFetcher(w: Window, name: string): Promise<an
 
   try {
     const pv = getProperty(w, name)
-    if (!pv) {
+    if (!pv || pv === '0') {
       return []
     }
 

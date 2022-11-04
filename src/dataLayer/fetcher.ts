@@ -14,7 +14,7 @@ export default async function dataLayerFetcher(w: Window, name: string): Promise
   for (const dl of w.dataLayer) {
     if (Object.prototype.hasOwnProperty.call(dl, name)) {
       const pv = dl[name]
-      if (pv) {
+      if (pv && pv !== '0') {
         out = out.concat(pv)
       }
     }
