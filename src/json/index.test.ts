@@ -1,4 +1,3 @@
-import { expect, test } from '@jest/globals'
 import { structure } from './index'
 
 describe('json', () => {

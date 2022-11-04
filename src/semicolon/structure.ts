@@ -1,6 +1,6 @@
-import { Mapper } from '../types/mapper'
+import { Mapper } from '../mapper'
 
-export default async (value: any): Promise<Mapper> => {
+export default function semicolonStructure(value: any): Mapper {
   const values = value.split(';').map((v: string) => v.trim().split('='))
   const out: Mapper = {}
   for (const [k, v] of values) {

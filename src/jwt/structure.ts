@@ -1,6 +1,6 @@
-import { Mapper } from '../types/mapper'
+import { Mapper } from '../mapper'
 
-export default async (value: any): Promise<Mapper> => {
+export default function jwtStructure(value: any): Mapper {
   const s = value as string
   const parts = s.split('.')
   const claimsString = parts[1]

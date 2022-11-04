@@ -1,4 +1,4 @@
 import fetcher from './fetcher'
-import listener from './listener'
+import { getCookie, setCookie } from './util'
 
-export { fetcher, listener }
+export { fetcher, getCookie, setCookie }

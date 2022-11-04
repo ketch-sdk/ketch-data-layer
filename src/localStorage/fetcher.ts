@@ -1,12 +1,3 @@
-export default async (w: Window, name: string): Promise<any[]> => {
-  if (!w || name.length === 0) {
-    return []
-  }
+import { fetcher } from '../storage'
 
-  const pv = w.localStorage.getItem(name)
-  if (!pv) {
-    return []
-  }
-
-  return [pv]
-}
+export default fetcher('localStorage')

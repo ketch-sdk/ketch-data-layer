@@ -1,11 +1,11 @@
 import { fetcher } from './index'
 
-describe('cookie', () => {
+describe('managedCookie', () => {
   describe('fetcher', () => {
     test('returns value for a cookie', async () => {
       const w = {
         document: {
-          cookie: 'foo=bar; baz=bah',
+          cookie: '_swb=bar; baz=bah',
         },
       } as Window
 
@@ -15,12 +15,10 @@ describe('cookie', () => {
 
     test('returns empty list for a non-existent cookie', async () => {
       const w = {
-        document: {
-          cookie: '',
-        },
+        document: {},
       } as Window
 
-      const actual = await fetcher(w, 'foo')
+      const actual = await fetcher(w, '')
       expect(actual).toStrictEqual([])
     })
 
