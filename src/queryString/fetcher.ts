@@ -3,5 +3,5 @@ export default async function queryStringFetcher(w: Window, name: string): Promi
     return []
   }
 
-  return new URLSearchParams(w.location.search).getAll(name)
+  return new URLSearchParams(w.location.search).getAll(name).filter(x => x !== '0')
 }

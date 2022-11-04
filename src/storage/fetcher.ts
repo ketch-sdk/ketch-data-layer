@@ -7,7 +7,7 @@ export default function (storage: string) {
     try {
       const s: Storage = storage === 'localStorage' ? w.localStorage : w.sessionStorage
       const pv = s.getItem(name)
-      if (!pv) {
+      if (!pv || pv === '0') {
         return []
       }
 

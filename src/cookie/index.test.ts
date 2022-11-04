@@ -24,6 +24,17 @@ describe('cookie', () => {
       expect(actual).toStrictEqual([])
     })
 
+    test('returns empty list for a zero', async () => {
+      const w = {
+        document: {
+          cookie: '0',
+        },
+      } as Window
+
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual([])
+    })
+
     test('returns empty list for an empty name', async () => {
       const w = {
         document: {},

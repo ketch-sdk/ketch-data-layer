@@ -6,7 +6,7 @@ export default async function cookieFetcher(w: Window, name: string): Promise<an
   }
 
   const pv = getCookie(w, name)
-  if (!pv) {
+  if (!pv || pv === '0') {
     return []
   }
 

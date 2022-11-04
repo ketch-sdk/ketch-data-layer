@@ -20,6 +20,15 @@ describe('dataLayer', () => {
       expect(actual).toStrictEqual([])
     })
 
+    test('returns empty for a zero', async () => {
+      const w = {
+        dataLayer: [{ foo: 0 }],
+      } as Window
+
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual([])
+    })
+
     test('returns empty for a empty dataLayer', async () => {
       const w = {
         dataLayer: [] as any[],

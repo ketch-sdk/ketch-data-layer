@@ -123,20 +123,20 @@ export default class Watcher extends EventEmitter {
   /**
    * Starts watching for identities.
    */
-  start() {
+  async start() {
     if (this._intervalId) {
       return
     }
 
-    this.notify()
-
     if (this._listenerOptions.interval) {
-      this._intervalId = this._w.setInterval(this.notify, this._listenerOptions.interval)
+      this._intervalId = this._w.setInterval(this.notify.bind(this), this._listenerOptions.interval)
 
       if (this._listenerOptions.timeout) {
-        this._w.setTimeout(this.stop, this._listenerOptions.timeout)
+        this._w.setTimeout(this.stop.bind(this), this._listenerOptions.timeout)
       }
     }
+
+    return this.notify()
   }
 
   /**
@@ -170,5 +170,69 @@ export default class Watcher extends EventEmitter {
       this.emit('identity', identities)
       this._identities = identities
     }
+  }
+
+  /**
+   * Alias for `emitter.on(eventName, listener)`.
+   */
+  addListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    super.addListener(eventName, listener)
+    return this
+  }
+
+  /**
+   * Adds the `listener` function to the end of the listeners array for the
+   * event named `eventName`. No checks are made to see if the `listener` has
+   * already been added. Multiple calls passing the same combination of `eventName`and `listener` will result in the `listener` being added, and called, multiple
+   * times.
+   *
+   * @param eventName The name of the event.
+   * @param listener The callback function
+   */
+  on(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    super.on(eventName, listener)
+    return this
+  }
+
+  /**
+   * Adds a **one-time**`listener` function for the event named `eventName`. The
+   * next time `eventName` is triggered, this listener is removed and then invoked.
+   *
+   * @param eventName The name of the event.
+   * @param listener The callback function
+   */
+  once(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    super.once(eventName, listener)
+    return this
+  }
+
+  /**
+   * Removes the specified `listener` from the listener array for the event named`eventName`.
+   */
+  removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    super.removeListener(eventName, listener)
+    return this
+  }
+
+  /**
+   * Alias for `emitter.removeListener()`.
+   */
+  off(eventName: string | symbol, listener: (...args: any[]) => void): this {
+    super.off(eventName, listener)
+    return this
+  }
+
+  /**
+   * Removes all listeners, or those of the specified `eventName`.
+   *
+   * It is bad practice to remove listeners added elsewhere in the code,
+   * particularly when the `EventEmitter` instance was created by some other
+   * component or module (e.g. sockets or file streams).
+   *
+   * Returns a reference to the `EventEmitter`, so that calls can be chained.
+   */
+  removeAllListeners(event?: string | symbol): this {
+    super.removeAllListeners(event)
+    return this
   }
 }

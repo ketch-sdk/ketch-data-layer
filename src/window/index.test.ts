@@ -32,6 +32,14 @@ describe('window', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
+    test('returns empty list for an object', async () => {
+      const w = {} as Window
+      w['foo'] = {}
+
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual([])
+    })
+
     test('returns empty list an unrecognized value', async () => {
       const w = {} as Window
       w['foo'] = []

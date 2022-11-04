@@ -32,6 +32,16 @@ describe('queryString', () => {
       expect(actual).toEqual([])
     })
 
+    test('returns empty list on zero', async () => {
+      const w = {
+        location: {
+          search: 'foo=0',
+        },
+      } as Window
+      const actual = await fetcher(w, 'foo')
+      expect(actual).toEqual([])
+    })
+
     test('returns empty list on missing name', async () => {
       const w = {
         location: {

@@ -12,6 +12,12 @@ describe('sessionStorage', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
+    test('returns empty list for a zero', async () => {
+      window.sessionStorage.setItem('foo', '0')
+      const actual = await fetcher(window, 'foo')
+      expect(actual).toStrictEqual([])
+    })
+
     test('returns empty list for a non-existent item', async () => {
       const actual = await fetcher(window, 'foo')
       expect(actual).toStrictEqual([])
