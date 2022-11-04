@@ -16,6 +16,9 @@ import { ListenerOptions } from './listener'
 import { Structure } from './structure'
 import deepEqual from 'deep-equal'
 
+/**
+ * Watcher provides a mechanism for watching for identities.
+ */
 export default class Watcher extends EventEmitter {
   private readonly _w: Window
   private readonly _listenerOptions: ListenerOptions
@@ -23,6 +26,12 @@ export default class Watcher extends EventEmitter {
   private _fetchers: Map<string, (w: Window) => Promise<string[]>>
   private _identities: { [key: string]: string }
 
+  /**
+   * Create a new Watcher.
+   *
+   * @param w The window interface
+   * @param options The listener options
+   */
   constructor(w: Window, options?: ListenerOptions) {
     super()
     this._w = w
@@ -31,6 +40,12 @@ export default class Watcher extends EventEmitter {
     this._identities = {}
   }
 
+  /**
+   * Add an identity with the given name and definition.
+   *
+   * @param name The name of the identity.
+   * @param identity The definition of the identity.
+   */
   add(name: string, identity: Identity) {
     let structure: Structure
 
@@ -105,6 +120,9 @@ export default class Watcher extends EventEmitter {
     }
   }
 
+  /**
+   * Starts watching for identities.
+   */
   start() {
     if (this._intervalId) {
       return
@@ -121,6 +139,9 @@ export default class Watcher extends EventEmitter {
     }
   }
 
+  /**
+   * Stops watching for identities.
+   */
   stop() {
     if (!this._intervalId) {
       return
@@ -131,6 +152,9 @@ export default class Watcher extends EventEmitter {
     this._intervalId = undefined
   }
 
+  /**
+   * Fetches and notifies about identities.
+   */
   async notify(): Promise<void> {
     const identities: { [key: string]: string } = {}
 
