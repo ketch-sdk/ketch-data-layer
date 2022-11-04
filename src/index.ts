@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import { Identities, Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
-import { fetcher as cookieFetcher } from './cookie'
+import { fetcher as cookieFetcher, getCookie, setCookie } from './cookie'
 import { fetcher as dataLayerFetcher } from './dataLayer'
 import { fetcher as windowFetcher } from './window'
 import { fetcher as localStorageFetcher } from './localStorage'
@@ -15,6 +15,8 @@ import { structure as semicolonStructure } from './semicolon'
 import { ListenerOptions } from './listener'
 import { Structure } from './structure'
 import deepEqual from 'deep-equal'
+
+export { getCookie, setCookie }
 
 /**
  * Watcher provides a mechanism for watching for identities.

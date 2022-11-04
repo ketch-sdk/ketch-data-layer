@@ -1,5 +1,6 @@
 import Watcher from './index'
 import { IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
+jest.mock('uuid', () => ({ v4: () => '123456789' }))
 
 describe('watcher', () => {
   test('starts', done => {
@@ -88,6 +89,7 @@ describe('watcher', () => {
         foo_ls_idsp: 'bar_ls',
         foo_ss_idsp: 'John Doe',
         foo_win_idsp_qs: 'val2',
+        foo_managed_idsp: '123456789',
       })
       expect(listener).toHaveBeenNthCalledWith(2, {
         foo_win_idsp: 'bar_win2',
@@ -97,6 +99,7 @@ describe('watcher', () => {
         foo_ls_idsp: 'bar_ls',
         foo_ss_idsp: 'John Doe',
         foo_win_idsp_qs: 'val2',
+        foo_managed_idsp: '123456789',
       })
       done()
     }, 100)

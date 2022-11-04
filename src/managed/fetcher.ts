@@ -1,4 +1,5 @@
 import { getCookie, setCookie } from '../cookie'
+import { v4 as uuidv4 } from 'uuid'
 
 const MANAGED_IDENTITY_TTL = 730
 
@@ -14,7 +15,7 @@ export default async function managedFetcher(w: Window, name: string): Promise<a
     return [pv]
   }
 
-  setCookie(w, name, '', MANAGED_IDENTITY_TTL)
+  setCookie(w, name, uuidv4(), MANAGED_IDENTITY_TTL)
 
   pv = getCookie(w, name)
   if (pv) {
