@@ -43,6 +43,9 @@ function getProperty(w: Window, p: string): string | null {
 
   if (context && typeof context !== 'string') {
     context = context.toString()
+    if (context.startsWith('[object')) {
+      return ''
+    }
   }
 
   return context
