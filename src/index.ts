@@ -123,18 +123,18 @@ export default class Watcher extends EventEmitter {
   /**
    * Starts watching for identities.
    */
-  start() {
+  async start() {
     if (this._intervalId) {
       return
     }
 
-    this.notify()
+    await this.notify()
 
     if (this._listenerOptions.interval) {
-      this._intervalId = this._w.setInterval(this.notify, this._listenerOptions.interval)
+      this._intervalId = this._w.setInterval(this.notify.bind(this), this._listenerOptions.interval)
 
       if (this._listenerOptions.timeout) {
-        this._w.setTimeout(this.stop, this._listenerOptions.timeout)
+        this._w.setTimeout(this.stop.bind(this), this._listenerOptions.timeout)
       }
     }
   }
@@ -162,7 +162,9 @@ export default class Watcher extends EventEmitter {
       const values = await fetcher(this._w)
 
       for (const value of values) {
-        identities[key] = value
+        if (value && value !== '0') {
+          identities[key] = value
+        }
       }
     }
 
