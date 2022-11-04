@@ -5,12 +5,12 @@
   "description": "Ketch Data Layer interface",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build --minify --license licenses.txt -o dist src/index.ts",
-    "format": "prettier --write '**/*.ts'",
+    "build": "ncc build --minify --license licenses.txt src/index.ts",
+    "format": "prettier --write \"**/*.{ts,tsx,yml,yaml}\"",
     "format-check": "prettier --check '**/*.ts'",
     "lint": "eslint src/**/*.ts",
-    "test": "jest",
-    "all": "npm run build && npm run format && npm run lint && npm test"
+    "test": "jest --runInBand --passWithNoTests",
+    "docs": "typedoc --githubPages true --excludeInternal src/index.ts"
   },
   "repository": {
     "type": "git",
