@@ -1,4 +1,3 @@
-import { expect, test } from '@jest/globals'
 import { fetcher } from './index'
 
 describe('dataLayer', () => {

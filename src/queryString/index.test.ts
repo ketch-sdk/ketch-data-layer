@@ -1,4 +1,3 @@
-import { expect, test } from '@jest/globals'
 import { fetcher, structure } from './index'
 
 describe('queryString', () => {
@@ -30,6 +29,16 @@ describe('queryString', () => {
         },
       } as Window
       const actual = await fetcher(w, 'foo')
+      expect(actual).toEqual([])
+    })
+
+    test('returns empty list on missing name', async () => {
+      const w = {
+        location: {
+          search: 'bar=foo',
+        },
+      } as Window
+      const actual = await fetcher(w, '')
       expect(actual).toEqual([])
     })
   })

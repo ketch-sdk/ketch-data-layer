@@ -4,12 +4,8 @@ declare global {
   }
 }
 
-export default async (w: Window, name: string): Promise<any[]> => {
-  if (!w || name.length === 0) {
-    return []
-  }
-
-  if (!w.dataLayer) {
+export default async function dataLayerFetcher(w: Window, name: string): Promise<any[]> {
+  if (!w || !w.dataLayer || name.length === 0) {
     return []
   }
 

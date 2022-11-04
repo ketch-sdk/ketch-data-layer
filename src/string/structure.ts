@@ -1,6 +1,6 @@
-import { Mapper } from '../types/mapper'
+import { Mapper } from '../mapper'
 
-export default async (value: any): Promise<Mapper> => {
+export default function stringStructure(value: any): Mapper {
   return {
     value,
   }

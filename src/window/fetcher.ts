@@ -1,14 +1,18 @@
-export default async (w: Window, name: string): Promise<any[]> => {
+export default async function windowFetcher(w: Window, name: string): Promise<any[]> {
   if (!w || name.length === 0) {
     return []
   }
 
-  const pv = getProperty(w, name)
-  if (!pv) {
+  try {
+    const pv = getProperty(w, name)
+    if (!pv) {
+      return []
+    }
+
+    return [pv]
+  } catch (e) {
     return []
   }
-
-  return [pv]
 }
 
 function getProperty(w: Window, p: string): string | null {
@@ -37,7 +41,7 @@ function getProperty(w: Window, p: string): string | null {
     }
   }
 
-  if (context && typeof context === 'number') {
+  if (context && typeof context !== 'string') {
     context = context.toString()
   }
 
