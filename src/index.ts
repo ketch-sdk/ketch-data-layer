@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
+import { Identities, Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
 import { fetcher as cookieFetcher } from './cookie'
 import { fetcher as dataLayerFetcher } from './dataLayer'
 import { fetcher as windowFetcher } from './window'
@@ -24,7 +24,7 @@ export default class Watcher extends EventEmitter {
   private readonly _listenerOptions: ListenerOptions
   private _intervalId?: number
   private _fetchers: Map<string, (w: Window) => Promise<string[]>>
-  private _identities: { [key: string]: string }
+  private _identities: Identities
 
   /**
    * Create a new Watcher.
@@ -156,7 +156,7 @@ export default class Watcher extends EventEmitter {
    * Fetches and notifies about identities.
    */
   async notify(): Promise<void> {
-    const identities: { [key: string]: string } = {}
+    const identities: Identities = {}
 
     for (const [key, fetcher] of this._fetchers.entries()) {
       const values = await fetcher(this._w)
