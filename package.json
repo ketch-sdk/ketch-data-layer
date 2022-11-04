@@ -1,5 +1,5 @@
 {
-  "name": "@ketch/data-layer",
+  "name": "@ketch-sdk/data-layer",
   "version": "0.0.0",
   "private": true,
   "description": "Ketch Data Layer interface",
