@@ -16,7 +16,22 @@ import { ListenerOptions } from './listener'
 import { Structure } from './structure'
 import deepEqual from 'deep-equal'
 
-export { getCookie, setCookie }
+export {
+  cookieFetcher,
+  getCookie,
+  setCookie,
+  dataLayerFetcher,
+  windowFetcher,
+  localStorageFetcher,
+  sessionStorageFetcher,
+  queryStringFetcher,
+  managedFetcher,
+  stringStructure,
+  jsonStructure,
+  jwtStructure,
+  queryStructure,
+  semicolonStructure,
+}
 
 /**
  * Watcher provides a mechanism for watching for identities.
@@ -178,8 +193,7 @@ export default class Watcher extends EventEmitter {
    * Alias for `emitter.on(eventName, listener)`.
    */
   addListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    super.addListener(eventName, listener)
-    return this
+    return this.on(eventName, listener)
   }
 
   /**
@@ -212,8 +226,7 @@ export default class Watcher extends EventEmitter {
    * Removes the specified `listener` from the listener array for the event named`eventName`.
    */
   removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    super.removeListener(eventName, listener)
-    return this
+    return this.off(eventName, listener)
   }
 
   /**

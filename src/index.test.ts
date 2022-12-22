@@ -68,7 +68,9 @@ describe('watcher', () => {
       variable: 'foo_managed',
     })
     const listener = jest.fn().mockName('listener') // .mockImplementation(console.log)
-    watcher.on('identity', listener)
+    const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
+    watcher.addListener('identity', listener)
+    watcher.once('identity', onceListener)
     watcher.start()
     watcher.start()
     watcher.notify()
@@ -80,6 +82,9 @@ describe('watcher', () => {
     watcher.stop()
 
     setTimeout(() => {
+      watcher.removeListener('identity', listener)
+      watcher.removeAllListeners('identity')
+      expect(onceListener).toHaveBeenCalledTimes(1)
       expect(listener).toHaveBeenCalledTimes(2)
       expect(listener).toHaveBeenNthCalledWith(1, {
         foo_win_idsp: 'bar_win',
