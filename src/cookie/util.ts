@@ -32,14 +32,8 @@ export function setCookie(w: Window, key: string, value: any, ttl?: number): voi
     // set cookie
     w.document.cookie = `${details}; domain=${hostnameParts.slice(-1 * i).join('.')}`
 
-    // get cookie
-    const v = w.document.cookie.split('; ').reduce((r, v) => {
-      const parts = v.split('=')
-      return parts[0] === key ? decodeURIComponent(parts[1]) : r
-    }, '')
-
     // return if set, otherwise retry with an additional part on the domain
-    if (v) {
+    if (getCookie(w, key)) {
       return
     }
   }
