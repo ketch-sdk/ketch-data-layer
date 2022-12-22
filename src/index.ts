@@ -16,7 +16,22 @@ import { ListenerOptions } from './listener'
 import { Structure } from './structure'
 import deepEqual from 'deep-equal'
 
-export { getCookie, setCookie }
+export {
+  cookieFetcher,
+  getCookie,
+  setCookie,
+  dataLayerFetcher,
+  windowFetcher,
+  localStorageFetcher,
+  sessionStorageFetcher,
+  queryStringFetcher,
+  managedFetcher,
+  stringStructure,
+  jsonStructure,
+  jwtStructure,
+  queryStructure,
+  semicolonStructure,
+}
 
 /**
  * Watcher provides a mechanism for watching for identities.
