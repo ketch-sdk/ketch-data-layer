@@ -28,7 +28,7 @@
   "author": "Ketch Kloud, Inc.",
   "license": "MIT",
   "devDependencies": {
-    "@ketch-sdk/ketch-types": "^1.1.10",
+    "@ketch-sdk/ketch-types": "^1.2.0",
     "@types/deep-equal": "^1.0.1",
     "@types/events": "^3.0.0",
     "@types/jest": "^29.2.4",
