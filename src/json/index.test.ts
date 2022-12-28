@@ -2,12 +2,19 @@ import { structure } from './index'
 
 describe('json', () => {
   describe('structure', () => {
-    test('returns an object with value', async () => {
+    test('returns an object with value for object', async () => {
       const input = '{"foo": "bar", "baz": "bah"}'
       const actual = await structure(input)
       expect(actual).toMatchObject({
         foo: 'bar',
         baz: 'bah',
+      })
+    })
+    test('returns an object with value for string', async () => {
+      const input = '"bah"'
+      const actual = await structure(input)
+      expect(actual).toMatchObject({
+        value: 'bah',
       })
     })
   })
