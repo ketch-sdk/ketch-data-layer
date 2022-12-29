@@ -67,7 +67,7 @@ describe('watcher', () => {
       format: IdentityFormat.IDENTITY_FORMAT_STRING,
       variable: 'foo_managed',
     })
-    watcher.add('foo_provider', () => Promise.resolve(["bar_provider"]))
+    watcher.add('foo_provider', () => Promise.resolve(['bar_provider']))
     const listener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     watcher.addListener('identity', listener)
