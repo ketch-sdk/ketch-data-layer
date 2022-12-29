@@ -67,6 +67,7 @@ describe('watcher', () => {
       format: IdentityFormat.IDENTITY_FORMAT_STRING,
       variable: 'foo_managed',
     })
+    watcher.add('foo_provider', () => Promise.resolve(["bar_provider"]))
     const listener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     watcher.addListener('identity', listener)
@@ -95,6 +96,7 @@ describe('watcher', () => {
         foo_ss_idsp: 'John Doe',
         foo_win_idsp_qs: 'val2',
         foo_managed_idsp: '123456789',
+        foo_provider: 'bar_provider',
       })
       expect(listener).toHaveBeenNthCalledWith(2, {
         foo_win_idsp: 'bar_win2',
@@ -105,6 +107,7 @@ describe('watcher', () => {
         foo_ss_idsp: 'John Doe',
         foo_win_idsp_qs: 'val2',
         foo_managed_idsp: '123456789',
+        foo_provider: 'bar_provider',
       })
       done()
     }, 100)
