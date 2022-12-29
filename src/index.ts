@@ -63,8 +63,13 @@ export default class Watcher extends EventEmitter {
    * @param name The name of the identity.
    * @param identity The definition of the identity.
    */
-  add(name: string, identity: Identity) {
+  add(name: string, identity: Identity | (() => Promise<string[]>)) {
     let structure: Structure
+
+    if (typeof identity === 'function') {
+      this._fetchers.set(name, () => identity())
+      return
+    }
 
     switch (identity.format) {
       case IdentityFormat.IDENTITY_FORMAT_JSON:
