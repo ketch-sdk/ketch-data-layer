@@ -178,7 +178,7 @@ This library also exposes some utility functions that may be useful outside of t
 ### getCookie
 
 ```typescript
-import { getCookie } from '@ketch-com/ketch-data-layer/cookie'
+import { getCookie } from '@ketch-sdk/ketch-data-layer/cookie'
 
 const name: string = ''
 const value = getCookie(window, name)
@@ -189,7 +189,7 @@ Retrieves the full raw value of the cookie with the given name.
 ### setCookie
 
 ```typescript
-import { setCookie } from '@ketch-com/ketch-data-layer/cookie'
+import { setCookie } from '@ketch-sdk/ketch-data-layer/cookie'
 
 const name: string = ''
 const value: any = ''
