@@ -1,5 +1,6 @@
-export type Listener = (name: string, value: any) => void
-
+/**
+ * ListenerOptions provide an interval and timeout for listening.
+ */
 export type ListenerOptions = {
   interval?: number
   timeout?: number
