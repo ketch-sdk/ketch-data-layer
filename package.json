@@ -29,9 +29,9 @@
   "license": "MIT",
   "devDependencies": {
     "@ketch-sdk/ketch-types": "^1.4.3",
-    "@types/deep-equal": "^1.0.1",
     "@types/events": "^3.0.0",
     "@types/jest": "^29.2.5",
+    "@types/nano-equal": "^2.0.0",
     "@types/node": "^18.11.18",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
@@ -52,7 +52,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
-    "deep-equal": "^2.2.0",
+    "nano-equal": "^2.0.2",
     "tslib": "^2.4.1",
     "uuid": "^9.0.0"
   },

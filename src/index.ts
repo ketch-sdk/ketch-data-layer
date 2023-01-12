@@ -14,7 +14,7 @@ import { structure as queryStructure } from './queryString'
 import { structure as semicolonStructure } from './semicolon'
 import { ListenerOptions } from './listener'
 import { Structure } from './structure'
-import deepEqual from 'deep-equal'
+import deepEqual from 'nano-equal'
 
 export {
   cookieFetcher,
