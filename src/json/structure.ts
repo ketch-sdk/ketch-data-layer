@@ -1,4 +1,4 @@
-import { Mapper } from '../mapper'
+import type { Mapper } from '../mapper'
 
 export default function jsonStructure(input: any): Mapper {
   const value = JSON.parse(input)

@@ -1,3 +1,3 @@
-import { Mapper } from '../mapper'
+import type { Mapper } from '../mapper'
 
-export type Structure = (value: any) => Mapper
+export declare type Structure = (value: any) => Mapper

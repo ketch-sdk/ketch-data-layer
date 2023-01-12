@@ -1,4 +1,4 @@
-import { Mapper } from '../mapper'
+import type { Mapper } from '../mapper'
 
 export default function jwtStructure(value: any): Mapper {
   const s = value as string
