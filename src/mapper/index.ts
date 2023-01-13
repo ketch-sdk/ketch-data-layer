@@ -1,6 +1,6 @@
 /**
  * Mapper is a key/value string map.
  */
-export type Mapper = {
+export declare type Mapper = {
   [key: string]: string
 }

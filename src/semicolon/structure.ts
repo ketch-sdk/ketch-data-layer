@@ -1,4 +1,4 @@
-import { Mapper } from '../mapper'
+import type { Mapper } from '../mapper'
 
 export default function semicolonStructure(value: any): Mapper {
   const values = value.split(';').map((v: string) => v.trim().split('='))
