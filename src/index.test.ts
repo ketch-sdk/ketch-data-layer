@@ -68,6 +68,7 @@ describe('watcher', () => {
       variable: 'foo_managed',
     })
     watcher.add('foo_provider', () => Promise.resolve(['bar_provider']))
+    watcher.add('bad_provider', () => Promise.reject('expected to throw'))
     const listener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     watcher.addListener('identity', listener)
