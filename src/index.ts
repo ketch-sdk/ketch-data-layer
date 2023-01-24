@@ -15,6 +15,7 @@ import { structure as semicolonStructure } from './semicolon'
 import { ListenerOptions } from './listener'
 import { Structure } from './structure'
 import deepEqual from 'nano-equal'
+import { getLogger } from '@ketch-sdk/ketch-logging'
 
 export {
   cookieFetcher,
@@ -32,6 +33,8 @@ export {
   queryStructure,
   semicolonStructure,
 }
+
+const log = getLogger('identity')
 
 /**
  * Watcher provides a mechanism for watching for identities.
@@ -181,10 +184,14 @@ export default class Watcher extends EventEmitter {
     const identities: Identities = {}
 
     for (const [key, fetcher] of this._fetchers.entries()) {
-      const values = await fetcher(this._w)
+      try {
+        const values = await fetcher(this._w)
 
-      for (const value of values) {
-        identities[key] = value
+        for (const value of values) {
+          identities[key] = value
+        }
+      } catch (e) {
+        log.warn(`failed to fetch identity for ${key}: ${e}`)
       }
     }
 
