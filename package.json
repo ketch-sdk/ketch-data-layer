@@ -29,9 +29,8 @@
   "author": "Ketch Kloud, Inc.",
   "license": "MIT",
   "devDependencies": {
-    "@ketch-sdk/ketch-types": "^1.4.5",
     "@types/events": "^3.0.0",
-    "@types/jest": "^29.2.6",
+    "@types/jest": "^29.4.0",
     "@types/nano-equal": "^2.0.0",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
@@ -51,8 +50,9 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
-    "@ketch-com/ketch-cookie": "^1.0.0",
+    "@ketch-com/ketch-cookie": "^1.0.1",
     "@ketch-sdk/ketch-logging": "^1.0.3",
+    "@ketch-sdk/ketch-types": "^1.4.5",
     "events": "^3.3.0",
     "nano-equal": "^2.0.2",
     "tslib": "^2.4.1",
