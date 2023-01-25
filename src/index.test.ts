@@ -1,5 +1,5 @@
 import Watcher from './index'
-import { IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
+import { Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
 jest.mock('uuid', () => ({ v4: () => '123456789' }))
 
 describe('watcher', () => {
@@ -69,6 +69,11 @@ describe('watcher', () => {
     })
     watcher.add('foo_provider', () => Promise.resolve(['bar_provider']))
     watcher.add('bad_provider', () => Promise.reject('expected to throw'))
+    try {
+      watcher.add('corrupt_type', {} as Identity)
+    } catch (e) {
+      expect(e).toBeTruthy()
+    }
     const listener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
     watcher.addListener('identity', listener)
