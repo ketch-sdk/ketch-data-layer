@@ -1,7 +1,7 @@
-import { getCookie, setCookie } from '../cookie'
+import { getCookie, setCookie } from '@ketch-com/ketch-cookie'
 import { v4 as uuidv4 } from 'uuid'
 
-const MANAGED_IDENTITY_TTL = 730
+const MANAGED_IDENTITY_TTL = 730 * 86400
 
 export default async function managedFetcher(w: Window, name: string): Promise<any[]> {
   if (!w || name.length === 0) {
