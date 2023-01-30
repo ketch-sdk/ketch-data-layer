@@ -2,19 +2,35 @@ import { fetcher } from './index'
 
 describe('managedCookie', () => {
   describe('fetcher', () => {
-    test('returns value for a cookie', async () => {
-      document.cookie = '_swb=bar; baz=bah'
+    it('returns value for a cookie', async () => {
+      jest.spyOn(window.document, 'cookie', 'get').mockReturnValue('_swb=bar; baz=bah')
       const actual = await fetcher(window, 'foo')
       expect(actual).toStrictEqual(['bar'])
     })
 
-    test('sets value for a non-existent cookie', async () => {
+    it('sets value for a non-existent cookie', async () => {
+      let cookie = ''
+      jest.spyOn(window.document, 'cookie', 'get').mockImplementation(() => {
+        return cookie
+      })
+      const cookieSet = jest.spyOn(window.document, 'cookie', 'set')
+      cookieSet.mockImplementation((value: string) => {
+        cookie = value
+      })
       const actual = await fetcher(window, 'foo')
-      expect(actual).not.toBeFalsy()
+      expect(actual).toHaveLength(1)
+      expect(cookieSet).toHaveBeenCalled()
     })
 
-    test('returns empty list for an empty name', async () => {
+    it('returns empty list for an empty name', async () => {
+      jest.spyOn(window.document, 'cookie', 'get').mockReturnValue('')
       const actual = await fetcher(window, '')
+      expect(actual).toStrictEqual([])
+    })
+
+    it('returns empty list if set cookie fails', async () => {
+      jest.spyOn(window.document, 'cookie', 'get').mockReturnValue('')
+      const actual = await fetcher(window, 'foo')
       expect(actual).toStrictEqual([])
     })
   })
