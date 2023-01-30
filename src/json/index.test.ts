@@ -2,7 +2,7 @@ import { structure } from './index'
 
 describe('json', () => {
   describe('structure', () => {
-    test('returns an object with value for object', async () => {
+    it('returns an object with value for object', async () => {
       const input = '{"foo": "bar", "baz": "bah"}'
       const actual = await structure(input)
       expect(actual).toMatchObject({
@@ -10,7 +10,8 @@ describe('json', () => {
         baz: 'bah',
       })
     })
-    test('returns an object with value for string', async () => {
+
+    it('returns an object with value for string', async () => {
       const input = '"bah"'
       const actual = await structure(input)
       expect(actual).toMatchObject({

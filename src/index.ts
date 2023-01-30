@@ -39,12 +39,13 @@ const log = getLogger('identity')
 /**
  * Watcher provides a mechanism for watching for identities.
  */
-export default class Watcher extends EventEmitter {
+export default class Watcher {
   private readonly _w: Window
   private readonly _listenerOptions: ListenerOptions
   private _intervalId?: number
   private _fetchers: Map<string, (w: Window) => Promise<string[]>>
   private _identities: Identities
+  private _emitter: EventEmitter
 
   /**
    * Create a new Watcher.
@@ -52,10 +53,10 @@ export default class Watcher extends EventEmitter {
    * @param w The window interface
    * @param options The listener options
    */
-  constructor(w: Window, options?: ListenerOptions) {
-    super()
+  constructor(w: Window, options: ListenerOptions = {}) {
+    this._emitter = new EventEmitter()
     this._w = w
-    this._listenerOptions = options || {}
+    this._listenerOptions = options
     this._fetchers = new Map<string, (w: Window) => Promise<string[]>>()
     this._identities = {}
   }
@@ -196,7 +197,7 @@ export default class Watcher extends EventEmitter {
     }
 
     if (!deepEqual(identities, this._identities)) {
-      this.emit('identity', identities)
+      this._emitter.emit('identity', identities)
       this._identities = identities
     }
   }
@@ -218,7 +219,7 @@ export default class Watcher extends EventEmitter {
    * @param listener The callback function
    */
   on(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    super.on(eventName, listener)
+    this._emitter.on(eventName, listener)
     return this
   }
 
@@ -230,7 +231,7 @@ export default class Watcher extends EventEmitter {
    * @param listener The callback function
    */
   once(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    super.once(eventName, listener)
+    this._emitter.once(eventName, listener)
     return this
   }
 
@@ -245,7 +246,7 @@ export default class Watcher extends EventEmitter {
    * Alias for `emitter.removeListener()`.
    */
   off(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    super.off(eventName, listener)
+    this._emitter.off(eventName, listener)
     return this
   }
 
@@ -259,7 +260,7 @@ export default class Watcher extends EventEmitter {
    * Returns a reference to the `EventEmitter`, so that calls can be chained.
    */
   removeAllListeners(event?: string | symbol): this {
-    super.removeAllListeners(event)
+    this._emitter.removeAllListeners(event)
     return this
   }
 }

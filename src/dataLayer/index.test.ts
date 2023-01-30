@@ -2,7 +2,7 @@ import { fetcher } from './index'
 
 describe('dataLayer', () => {
   describe('fetcher', () => {
-    test('returns value for a dataLayer', async () => {
+    it('returns value for a dataLayer', async () => {
       const w = {
         dataLayer: [{ foo: 'bar' }],
       } as Window
@@ -11,7 +11,7 @@ describe('dataLayer', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns empty for a mismatched dataLayer', async () => {
+    it('returns empty for a mismatched dataLayer', async () => {
       const w = {
         dataLayer: [{ bar: 'foo' }],
       } as Window
@@ -20,7 +20,7 @@ describe('dataLayer', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns empty for a zero', async () => {
+    it('returns empty for a zero', async () => {
       const w = {
         dataLayer: [{ foo: 0 }],
       } as Window
@@ -29,7 +29,7 @@ describe('dataLayer', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns empty for a empty dataLayer', async () => {
+    it('returns empty for a empty dataLayer', async () => {
       const w = {
         dataLayer: [] as any[],
       } as Window
@@ -38,7 +38,7 @@ describe('dataLayer', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns empty for a missing dataLayer', async () => {
+    it('returns empty for a missing dataLayer', async () => {
       const w = {} as Window
 
       const actual = await fetcher(w, 'foo')

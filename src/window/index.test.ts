@@ -8,7 +8,7 @@ declare global {
 
 describe('window', () => {
   describe('fetcher', () => {
-    test('returns empty list for an empty name', async () => {
+    it('returns empty list for an empty name', async () => {
       const w = {} as Window
       w['foo'] = 'bar'
 
@@ -16,7 +16,7 @@ describe('window', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns value for a variable', async () => {
+    it('returns value for a variable', async () => {
       const w = {} as Window
       w['foo'] = 'bar'
 
@@ -24,7 +24,7 @@ describe('window', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns value for a variable with window prefix', async () => {
+    it('returns value for a variable with window prefix', async () => {
       const w = {} as Window
       w['foo'] = 'bar'
 
@@ -32,7 +32,7 @@ describe('window', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns empty list for an object', async () => {
+    it('returns empty list for an object', async () => {
       const w = {} as Window
       w['foo'] = {}
 
@@ -40,7 +40,7 @@ describe('window', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns empty list an unrecognized value', async () => {
+    it('returns empty list an unrecognized value', async () => {
       const w = {} as Window
       w['foo'] = []
 
@@ -48,7 +48,7 @@ describe('window', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns empty list an undefined name', async () => {
+    it('returns empty list an undefined name', async () => {
       const w = {} as Window
       w['foo'] = undefined
 
@@ -56,7 +56,7 @@ describe('window', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns string form of a numeric value', async () => {
+    it('returns string form of a numeric value', async () => {
       const w = {} as Window
       w['foo'] = 123
 
@@ -64,7 +64,7 @@ describe('window', () => {
       expect(actual).toStrictEqual(['123'])
     })
 
-    test('returns value for nested variable', async () => {
+    it('returns value for nested variable', async () => {
       const w = {} as Window
       w['foo'] = {
         foo: 'bar',
@@ -74,7 +74,7 @@ describe('window', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns empty for a null', async () => {
+    it('returns empty for a null', async () => {
       const w = {} as Window
       w['foo'] = null
 
@@ -82,7 +82,7 @@ describe('window', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns empty for an undefined', async () => {
+    it('returns empty for an undefined', async () => {
       const w = {} as Window
       w['foo'] = undefined
 
@@ -90,7 +90,7 @@ describe('window', () => {
       expect(actual).toStrictEqual([])
     })
 
-    test('returns result of a function call', async () => {
+    it('returns result of a function call', async () => {
       const w = {} as Window
       w['foo'] = () => 'bar'
 
@@ -98,7 +98,7 @@ describe('window', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns result object returned from a function call', async () => {
+    it('returns result object returned from a function call', async () => {
       const w = {} as Window
       w['foo'] = () => ({ foo: 'bar' })
 
@@ -106,10 +106,20 @@ describe('window', () => {
       expect(actual).toStrictEqual(['bar'])
     })
 
-    test('returns empty for missing property', async () => {
+    it('returns empty for missing property', async () => {
       const w = {} as Window
 
       const actual = await fetcher(w, 'foo')
+      expect(actual).toStrictEqual([])
+    })
+
+    it('returns empty if function throws', async () => {
+      const w = {} as Window
+      w['foo'] = () => {
+        throw Error('oops')
+      }
+
+      const actual = await fetcher(w, 'foo()')
       expect(actual).toStrictEqual([])
     })
   })

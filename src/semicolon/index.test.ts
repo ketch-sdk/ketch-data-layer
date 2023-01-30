@@ -2,7 +2,7 @@ import { structure } from './index'
 
 describe('semicolon', () => {
   describe('structure', () => {
-    test('returns an object with values', async () => {
+    it('returns an object with values', async () => {
       const input = 'foo=bar;baz=bah'
       const actual = await structure(input)
       expect(actual).toMatchObject({

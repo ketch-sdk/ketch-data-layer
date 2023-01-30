@@ -3,8 +3,10 @@ import { Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
 jest.mock('uuid', () => ({ v4: () => '123456789' }))
 
 describe('watcher', () => {
-  test('starts', done => {
-    const watcher = new Watcher(window, {
+  it('starts', done => {
+    jest.spyOn(global.console, 'log').mockImplementation(() => {})
+    let watcher = new Watcher(window)
+    watcher = new Watcher(window, {
       interval: 500,
       timeout: 3000,
     })
@@ -90,6 +92,7 @@ describe('watcher', () => {
 
     setTimeout(() => {
       watcher.removeListener('identity', listener)
+      watcher.off('identity', listener)
       watcher.removeAllListeners('identity')
       expect(onceListener).toHaveBeenCalledTimes(1)
       expect(listener).toHaveBeenCalledTimes(2)
