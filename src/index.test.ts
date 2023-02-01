@@ -1,10 +1,12 @@
 import Watcher from './index'
 import { Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
+
 jest.mock('uuid', () => ({ v4: () => '123456789' }))
 
 describe('watcher', () => {
   it('starts', done => {
     jest.spyOn(global.console, 'log').mockImplementation(() => {})
+
     let watcher = new Watcher(window)
     watcher = new Watcher(window, {
       interval: 500,
