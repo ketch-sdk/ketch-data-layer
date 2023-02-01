@@ -195,7 +195,8 @@ export default class Watcher {
   /**
    * Adds the `listener` function to the end of the listeners array for the
    * event named `eventName`. No checks are made to see if the `listener` has
-   * already been added. Multiple calls passing the same combination of `eventName`and `listener` will result in the `listener` being added, and called, multiple
+   * already been added. Multiple calls passing the same combination of `eventName`and `listener` will result in
+   * the `listener` being added, and called, multiple
    * times.
    *
    * @param eventName The name of the event.
