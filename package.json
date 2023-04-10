@@ -47,7 +47,7 @@
     "prettier": "^2.8.3",
     "ts-jest": "^29.0.5",
     "typedoc": "^0.23.24",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "@ketch-com/ketch-cookie": "^1.0.4",
