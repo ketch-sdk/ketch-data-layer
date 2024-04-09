@@ -65,7 +65,7 @@ describe('cookie', () => {
         },
       } as any as Window
       setCookie(w, 'foo', 123)
-      expect(w.document.cookie).toBe('foo=123; path=/; SameSite=None; Secure')
+      expect(w.document.cookie).toBe('foo=123; path=/ketch; SameSite=None; Secure')
     })
 
     it('sets value of cookie with ttl', () => {
@@ -76,7 +76,7 @@ describe('cookie', () => {
         },
       } as any as Window
       setCookie(w, 'foo', 123, 456)
-      expect(w.document.cookie.replace(/expires.+/, '')).toBe('foo=123; path=/; SameSite=None; Secure; ')
+      expect(w.document.cookie.replace(/expires.+/, '')).toBe('foo=123; path=/ketch; SameSite=None; Secure; ')
     })
   })
 })
