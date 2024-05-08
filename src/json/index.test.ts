@@ -20,11 +20,11 @@ describe('json', () => {
     })
 
     it('returns an object if input in an object', async () => {
-      const input = { foo: 'bar', baz: 'bah' }
+      const input = { foo: 'bar', baz: 123 }
       const actual = await structure(input)
       expect(actual).toMatchObject({
         foo: 'bar',
-        baz: 'bah',
+        baz: 123,
       })
     })
   })
