@@ -84,43 +84,51 @@ export default class Watcher {
     switch (identity.type) {
       case IdentityType.IDENTITY_TYPE_COOKIE:
         this._fetchers.set(name, (w: Window) =>
-          cookieFetcher(w, identity.variable).then(values => values.map(structure).map(values => values[key])),
+          cookieFetcher(w, identity.variable).then(values => values.map(structure).map(values => String(values[key]))),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_DATA_LAYER:
         this._fetchers.set(name, (w: Window) =>
-          dataLayerFetcher(w, identity.variable).then(values => values.map(structure).map(values => values[key])),
+          dataLayerFetcher(w, identity.variable).then(values =>
+            values.map(structure).map(values => String(values[key])),
+          ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_WINDOW:
         this._fetchers.set(name, (w: Window) =>
-          windowFetcher(w, identity.variable).then(values => values.map(structure).map(values => values[key])),
+          windowFetcher(w, identity.variable).then(values => values.map(structure).map(values => String(values[key]))),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_LOCAL_STORAGE:
         this._fetchers.set(name, (w: Window) =>
-          localStorageFetcher(w, identity.variable).then(values => values.map(structure).map(values => values[key])),
+          localStorageFetcher(w, identity.variable).then(values =>
+            values.map(structure).map(values => String(values[key])),
+          ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_SESSION_STORAGE:
         this._fetchers.set(name, (w: Window) =>
-          sessionStorageFetcher(w, identity.variable).then(values => values.map(structure).map(values => values[key])),
+          sessionStorageFetcher(w, identity.variable).then(values =>
+            values.map(structure).map(values => String(values[key])),
+          ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_QUERY_STRING:
         this._fetchers.set(name, (w: Window) =>
-          queryStringFetcher(w, identity.variable).then(values => values.map(structure).map(values => values[key])),
+          queryStringFetcher(w, identity.variable).then(values =>
+            values.map(structure).map(values => String(values[key])),
+          ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_MANAGED:
         this._fetchers.set(name, (w: Window) =>
-          managedFetcher(w, identity.variable).then(values => values.map(structure).map(values => values[key])),
+          managedFetcher(w, identity.variable).then(values => values.map(structure).map(values => String(values[key]))),
         )
         break
 

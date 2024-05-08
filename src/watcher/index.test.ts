@@ -20,6 +20,7 @@ describe('watcher', () => {
       window.document.cookie = 'foo_cook=bar_cook'
       window.dataLayer = window.dataLayer || []
       window.dataLayer.push({ foo_dl: 'bar_dl1=val_dl&bar_dl2=val_dl2' })
+      window.dataLayer.push({ foo_dl2: { id: 123 } })
       window.localStorage.setItem('foo_ls', JSON.stringify({ value: 'bar_ls' }))
       window.sessionStorage.setItem(
         'foo_ss',
@@ -49,6 +50,12 @@ describe('watcher', () => {
         format: IdentityFormat.IDENTITY_FORMAT_QUERY,
         variable: 'foo_dl',
         key: 'bar_dl2',
+      })
+      watcher.add('foo_dl2_idsp', {
+        type: IdentityType.IDENTITY_TYPE_DATA_LAYER,
+        format: IdentityFormat.IDENTITY_FORMAT_JSON,
+        variable: 'foo_dl2',
+        key: 'id',
       })
       watcher.add('foo_qs_idsp', {
         type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
@@ -101,6 +108,7 @@ describe('watcher', () => {
           foo_win_idsp: 'bar_win',
           foo_cook_idsp: 'bar_cook',
           foo_dl_idsp: 'val_dl2',
+          foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',
           foo_ls_idsp: 'bar_ls',
           foo_ss_idsp: 'John Doe',
@@ -112,6 +120,7 @@ describe('watcher', () => {
           foo_win_idsp: 'bar_win2',
           foo_cook_idsp: 'bar_cook',
           foo_dl_idsp: 'val_dl2',
+          foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',
           foo_ls_idsp: 'bar_ls',
           foo_ss_idsp: 'John Doe',
