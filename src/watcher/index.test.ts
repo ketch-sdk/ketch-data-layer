@@ -20,7 +20,7 @@ describe('watcher', () => {
       window.document.cookie = 'foo_cook=bar_cook'
       window.dataLayer = window.dataLayer || []
       window.dataLayer.push({ foo_dl: 'bar_dl1=val_dl&bar_dl2=val_dl2' })
-      window.dataLayer.push({ foo_dl2: {id: 123} })
+      window.dataLayer.push({ foo_dl2: { id: 123 } })
       window.localStorage.setItem('foo_ls', JSON.stringify({ value: 'bar_ls' }))
       window.sessionStorage.setItem(
         'foo_ss',
