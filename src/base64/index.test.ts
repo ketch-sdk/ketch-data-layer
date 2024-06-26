@@ -21,15 +21,15 @@ describe('base64', () => {
     })
 
     it('does not affect json', async () => {
-      const input = [{foo: 'val1', bar: 2}]
+      const input = [{ foo: 'val1', bar: 2 }]
       const actual = await encoding(input)
-      expect(actual).toStrictEqual([{foo: 'val1', bar: 2}])
+      expect(actual).toStrictEqual([{ foo: 'val1', bar: 2 }])
     })
 
     it('handles list of inputs', async () => {
-      const input = ['dGVzdEBlbWFpbC5jb20%3D', {foo: 'val1', bar: 2}]
+      const input = ['dGVzdEBlbWFpbC5jb20%3D', { foo: 'val1', bar: 2 }]
       const actual = await encoding(input)
-      expect(actual).toStrictEqual(['test@email.com', {foo: 'val1', bar: 2}])
+      expect(actual).toStrictEqual(['test@email.com', { foo: 'val1', bar: 2 }])
     })
   })
 })
