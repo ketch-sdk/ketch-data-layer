@@ -1,5 +1,5 @@
 import Watcher from './index'
-import {Identity, IdentityEncoding, IdentityFormat, IdentityType} from '@ketch-sdk/ketch-types'
+import { Identity, IdentityEncoding, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
 
 jest.mock('uuid', () => ({ v4: () => '123456789' }))
 
@@ -85,20 +85,20 @@ describe('watcher', () => {
         type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
         format: IdentityFormat.IDENTITY_FORMAT_STRING,
         variable: 'foo_qs_base64_string',
-        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64
+        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64,
       })
       watcher.add('foo_qs_idsp_base64_json', {
         type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
         format: IdentityFormat.IDENTITY_FORMAT_JSON,
         variable: 'foo_qs_base64_json',
         key: 'email',
-        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64
+        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64,
       })
       watcher.add('foo_qs_idsp_noop', {
         type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
         format: IdentityFormat.IDENTITY_FORMAT_STRING,
         variable: 'foo_qs_noop',
-        encoding: IdentityEncoding.IDENTITY_ENCODING_NONE
+        encoding: IdentityEncoding.IDENTITY_ENCODING_NONE,
       })
       watcher.add('foo_provider', () => Promise.resolve(['bar_provider']))
       watcher.add('bad_provider', () => Promise.reject('expected to throw'))

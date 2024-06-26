@@ -9,13 +9,13 @@ describe('noop', () => {
     })
 
     it('returns json value', async () => {
-      const input = [{foo: 'val1', bar: 2}]
+      const input = [{ foo: 'val1', bar: 2 }]
       const actual = await encoding(input)
       expect(actual).toBe(input)
     })
 
     it('handles list of inputs', async () => {
-      const input = ['foobar', {foo: 'val1', bar: 2}]
+      const input = ['foobar', { foo: 'val1', bar: 2 }]
       const actual = await encoding(input)
       expect(actual).toBe(input)
     })
