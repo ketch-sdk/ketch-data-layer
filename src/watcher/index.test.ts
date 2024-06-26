@@ -1,5 +1,5 @@
 import Watcher from './index'
-import { Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
+import { Identity, IdentityEncoding, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
 
 jest.mock('uuid', () => ({ v4: () => '123456789' }))
 
@@ -28,6 +28,8 @@ describe('watcher', () => {
           'aWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
       )
       // window.location.search = 'foo_qs=bar_qs' - this has to be setup in jest.config.js
+      // foo_qs=bar_qs&foo_qs_base64_string=dGVzdEBlbWFpbC5jb20%3D&
+      // foo_qs_base64_json=eyJlbWFpbCI6ICJ0ZXN0QGVtYWlsLmNvbSIsICJuYW1lIjogInRlc3QifQ%3D%3D&foo_qs_noop=bar_qs_noop
 
       watcher.add('foo_win_idsp', {
         type: IdentityType.IDENTITY_TYPE_WINDOW,
@@ -79,6 +81,25 @@ describe('watcher', () => {
         format: IdentityFormat.IDENTITY_FORMAT_STRING,
         variable: 'foo_managed',
       })
+      watcher.add('foo_qs_idsp_base64_string', {
+        type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
+        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        variable: 'foo_qs_base64_string',
+        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64,
+      })
+      watcher.add('foo_qs_idsp_base64_json', {
+        type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
+        format: IdentityFormat.IDENTITY_FORMAT_JSON,
+        variable: 'foo_qs_base64_json',
+        key: 'email',
+        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64,
+      })
+      watcher.add('foo_qs_idsp_noop', {
+        type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
+        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        variable: 'foo_qs_noop',
+        encoding: IdentityEncoding.IDENTITY_ENCODING_NONE,
+      })
       watcher.add('foo_provider', () => Promise.resolve(['bar_provider']))
       watcher.add('bad_provider', () => Promise.reject('expected to throw'))
       expect(() => {
@@ -110,6 +131,9 @@ describe('watcher', () => {
           foo_dl_idsp: 'val_dl2',
           foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',
+          foo_qs_idsp_base64_json: 'test@email.com',
+          foo_qs_idsp_base64_string: 'test@email.com',
+          foo_qs_idsp_noop: 'bar_qs_noop',
           foo_ls_idsp: 'bar_ls',
           foo_ss_idsp: 'John Doe',
           foo_win_idsp_qs: 'val2',
@@ -122,6 +146,9 @@ describe('watcher', () => {
           foo_dl_idsp: 'val_dl2',
           foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',
+          foo_qs_idsp_base64_json: 'test@email.com',
+          foo_qs_idsp_base64_string: 'test@email.com',
+          foo_qs_idsp_noop: 'bar_qs_noop',
           foo_ls_idsp: 'bar_ls',
           foo_ss_idsp: 'John Doe',
           foo_win_idsp_qs: 'val2',

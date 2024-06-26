@@ -123,7 +123,7 @@ module.exports = {
 
   // Options that will be passed to the testEnvironment
   testEnvironmentOptions: {
-    url: 'https://localhost.localdomain/index.html?foo_qs=bar_qs',
+    url: 'https://localhost.localdomain/index.html?foo_qs=bar_qs&foo_qs_base64_string=dGVzdEBlbWFpbC5jb20%3D&foo_qs_base64_json=eyJlbWFpbCI6ICJ0ZXN0QGVtYWlsLmNvbSIsICJuYW1lIjogInRlc3QifQ%3D%3D&foo_qs_noop=bar_qs_noop',
   },
 
   // Adds a location field to test results

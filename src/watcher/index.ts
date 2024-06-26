@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { Identities, Identity, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
+import { Identities, Identity, IdentityFormat, IdentityType, IdentityEncoding } from '@ketch-sdk/ketch-types'
 import { fetcher as cookieFetcher } from '../cookie'
 import { fetcher as dataLayerFetcher } from '../dataLayer'
 import { fetcher as windowFetcher } from '../window'
@@ -12,8 +12,11 @@ import { structure as jsonStructure } from '../json'
 import { structure as jwtStructure } from '../jwt'
 import { structure as queryStructure } from '../queryString'
 import { structure as semicolonStructure } from '../semicolon'
+import { encoding as base64Encoding } from '../base64'
+import { encoding as noopEncoding } from '../noop'
 import { ListenerOptions } from '../listener'
 import { Structure } from '../structure'
+import { Encoding } from '../encoding'
 import deepEqual from 'nano-equal'
 import { getLogger } from '@ketch-sdk/ketch-logging'
 
@@ -52,6 +55,7 @@ export default class Watcher {
    */
   add(name: string, identity: Identity | (() => Promise<string[]>)) {
     let structure: Structure
+    let encoding: Encoding
 
     if (typeof identity === 'function') {
       this._fetchers.set(name, () => identity())
@@ -81,31 +85,52 @@ export default class Watcher {
 
     const key = identity.key || 'value'
 
+    switch (identity.encoding) {
+      case IdentityEncoding.IDENTITY_ENCODING_BASE64:
+        encoding = base64Encoding
+        break
+
+      default: // none or undefined
+        encoding = noopEncoding
+    }
+
     switch (identity.type) {
       case IdentityType.IDENTITY_TYPE_COOKIE:
         this._fetchers.set(name, (w: Window) =>
-          cookieFetcher(w, identity.variable).then(values => values.map(structure).map(values => String(values[key]))),
+          cookieFetcher(w, identity.variable).then(values =>
+            encoding(values)
+              .map(structure)
+              .map(values => String(values[key])),
+          ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_DATA_LAYER:
         this._fetchers.set(name, (w: Window) =>
           dataLayerFetcher(w, identity.variable).then(values =>
-            values.map(structure).map(values => String(values[key])),
+            encoding(values)
+              .map(structure)
+              .map(values => String(values[key])),
           ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_WINDOW:
         this._fetchers.set(name, (w: Window) =>
-          windowFetcher(w, identity.variable).then(values => values.map(structure).map(values => String(values[key]))),
+          windowFetcher(w, identity.variable).then(values =>
+            encoding(values)
+              .map(structure)
+              .map(values => String(values[key])),
+          ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_LOCAL_STORAGE:
         this._fetchers.set(name, (w: Window) =>
           localStorageFetcher(w, identity.variable).then(values =>
-            values.map(structure).map(values => String(values[key])),
+            encoding(values)
+              .map(structure)
+              .map(values => String(values[key])),
           ),
         )
         break
@@ -113,7 +138,9 @@ export default class Watcher {
       case IdentityType.IDENTITY_TYPE_SESSION_STORAGE:
         this._fetchers.set(name, (w: Window) =>
           sessionStorageFetcher(w, identity.variable).then(values =>
-            values.map(structure).map(values => String(values[key])),
+            encoding(values)
+              .map(structure)
+              .map(values => String(values[key])),
           ),
         )
         break
@@ -121,14 +148,20 @@ export default class Watcher {
       case IdentityType.IDENTITY_TYPE_QUERY_STRING:
         this._fetchers.set(name, (w: Window) =>
           queryStringFetcher(w, identity.variable).then(values =>
-            values.map(structure).map(values => String(values[key])),
+            encoding(values)
+              .map(structure)
+              .map(values => String(values[key])),
           ),
         )
         break
 
       case IdentityType.IDENTITY_TYPE_MANAGED:
         this._fetchers.set(name, (w: Window) =>
-          managedFetcher(w, identity.variable).then(values => values.map(structure).map(values => String(values[key]))),
+          managedFetcher(w, identity.variable).then(values =>
+            encoding(values)
+              .map(structure)
+              .map(values => String(values[key])),
+          ),
         )
         break
 
