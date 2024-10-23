@@ -1,7 +1,7 @@
 name: Build
 
 on:
-  push:
+  pull_request:
     branches: [main]
 
 jobs:
@@ -54,25 +54,3 @@ jobs:
         run: npm ci
       - name: Run all targets
         run: npm run all
-      - name: Publish
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  release:
-    name: Release
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Create Release
-        uses: conventional-actions/create-release@v1
-        with:
-          tag_name: ${{ needs.build.outputs.version }}
-          artifacts: "*"
-
-concurrency:
-  cancel-in-progress: true
-  group: ${{ github.workflow }}-${{ github.ref }}
