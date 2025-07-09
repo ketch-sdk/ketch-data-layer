@@ -232,7 +232,8 @@ export default class Watcher {
     }
 
     // If there are new attributes or no attributes at all, emit the event
-    // This is to ensure that absent attributes do not hold up the event loop (if it is waiting for attributes object to be fulfilled)
+    // This is to ensure that absent attributes do not hold up the event loop
+    // (if it is waiting for attributes object to be fulfilled)
     if (!deepEqual(attributes, this._attributes) || Object.keys(this._attributes).length === 0) {
       const message = type || 'identity'
       this._emitter.emit(message, attributes)
