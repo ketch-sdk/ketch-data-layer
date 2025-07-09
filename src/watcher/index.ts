@@ -64,7 +64,7 @@ export default class Watcher {
    * @param name The name of the trait.
    * @param attribute The definition of the trait.
    */
-  add(name: string, attribute: Identity /* Trait */ | (() => Promise<string[]>)) {
+  add(name: string, attribute: Identity /* | Trait */ | (() => Promise<string[]>)) {
     let structure: Structure
     let encoding: Encoding
 
@@ -231,7 +231,9 @@ export default class Watcher {
       }
     }
 
-    if (!deepEqual(attributes, this._attributes)) {
+    // If there are new attributes or no attributes at all, emit the event
+    // This is to ensure that absent attributes do not hold up the event loop (if it is waiting for attributes object to be fulfilled)
+    if (!deepEqual(attributes, this._attributes) || Object.keys(this._attributes).length === 0) {
       const message = type || 'identity'
       this._emitter.emit(message, attributes)
       this._attributes = attributes
