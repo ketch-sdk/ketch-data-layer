@@ -29,6 +29,7 @@
   "author": "Ketch Kloud, Inc.",
   "license": "MIT",
   "devDependencies": {
+    "@ketch-sdk/ketch-types": "^1.65.0",
     "@types/events": "^3.0.0",
     "@types/jest": "^29.5.0",
     "@types/nano-equal": "^2.0.0",
@@ -52,7 +53,6 @@
   "dependencies": {
     "@ketch-com/ketch-cookie": "^1.0.5",
     "@ketch-sdk/ketch-logging": "^1.2.0",
-    "@ketch-sdk/ketch-types": "^1.37.7",
     "events": "^3.3.0",
     "nano-equal": "^2.0.2",
     "tslib": "^2.5.0",

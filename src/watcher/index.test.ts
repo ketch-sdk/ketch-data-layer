@@ -1,5 +1,15 @@
 import Watcher from './index'
-import { Identity, IdentityEncoding, IdentityFormat, IdentityType } from '@ketch-sdk/ketch-types'
+import {
+  Identity,
+  IdentityEncoding,
+  IdentityFormat,
+  IdentityType,
+  Trait,
+  TraitEncoding,
+  TraitFormat,
+  TraitType,
+  TraitName,
+} from '@ketch-sdk/ketch-types'
 
 jest.mock('uuid', () => ({ v4: () => '123456789' }))
 
@@ -188,90 +198,90 @@ describe('watcher', () => {
       // foo_qs_base64_json=eyJlbWFpbCI6ICJ0ZXN0QGVtYWlsLmNvbSIsICJuYW1lIjogInRlc3QifQ%3D%3D&foo_qs_noop=bar_qs_noop
 
       watcher.add('foo_win_idsp', {
-        type: IdentityType.IDENTITY_TYPE_WINDOW,
-        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        type: TraitType.TRAIT_TYPE_WINDOW,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
         variable: 'window.foo_win',
       })
       watcher.add('foo_win_idsp_qs', {
-        type: IdentityType.IDENTITY_TYPE_WINDOW,
-        format: IdentityFormat.IDENTITY_FORMAT_SEMICOLON,
+        type: TraitType.TRAIT_TYPE_WINDOW,
+        format: TraitFormat.TRAIT_FORMAT_SEMICOLON,
         variable: 'window.foo_win_qs',
         key: 'bar2',
       })
       watcher.add('foo_cook_idsp', {
-        type: IdentityType.IDENTITY_TYPE_COOKIE,
-        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        type: TraitType.TRAIT_TYPE_COOKIE,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
         variable: 'foo_cook',
       })
       watcher.add('foo_dl_idsp', {
-        type: IdentityType.IDENTITY_TYPE_DATA_LAYER,
-        format: IdentityFormat.IDENTITY_FORMAT_QUERY,
+        type: TraitType.TRAIT_TYPE_DATA_LAYER,
+        format: TraitFormat.TRAIT_FORMAT_QUERY,
         variable: 'foo_dl',
         key: 'bar_dl2',
       })
       watcher.add('foo_dl2_idsp', {
-        type: IdentityType.IDENTITY_TYPE_DATA_LAYER,
-        format: IdentityFormat.IDENTITY_FORMAT_JSON,
+        type: TraitType.TRAIT_TYPE_DATA_LAYER,
+        format: TraitFormat.TRAIT_FORMAT_JSON,
         variable: 'foo_dl2',
         key: 'id',
       })
       watcher.add('foo_qs_idsp', {
-        type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
-        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        type: TraitType.TRAIT_TYPE_QUERY_STRING,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
         variable: 'foo_qs',
       })
       watcher.add('foo_ls_idsp', {
-        type: IdentityType.IDENTITY_TYPE_LOCAL_STORAGE,
-        format: IdentityFormat.IDENTITY_FORMAT_JSON,
+        type: TraitType.TRAIT_TYPE_LOCAL_STORAGE,
+        format: TraitFormat.TRAIT_FORMAT_JSON,
         variable: 'foo_ls',
         key: 'value',
       })
       watcher.add('foo_ss_idsp', {
-        type: IdentityType.IDENTITY_TYPE_SESSION_STORAGE,
-        format: IdentityFormat.IDENTITY_FORMAT_JWT,
+        type: TraitType.TRAIT_TYPE_SESSION_STORAGE,
+        format: TraitFormat.TRAIT_FORMAT_JWT,
         variable: 'foo_ss',
         key: 'name',
       })
       watcher.add('foo_managed_idsp', {
-        type: IdentityType.IDENTITY_TYPE_MANAGED,
-        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        type: TraitType.TRAIT_TYPE_MANAGED,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
         variable: 'foo_managed',
       })
       watcher.add('foo_qs_idsp_base64_string', {
-        type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
-        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        type: TraitType.TRAIT_TYPE_QUERY_STRING,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
         variable: 'foo_qs_base64_string',
-        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64,
+        encoding: TraitEncoding.TRAIT_ENCODING_BASE64,
       })
       watcher.add('foo_qs_idsp_base64_json', {
-        type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
-        format: IdentityFormat.IDENTITY_FORMAT_JSON,
+        type: TraitType.TRAIT_TYPE_QUERY_STRING,
+        format: TraitFormat.TRAIT_FORMAT_JSON,
         variable: 'foo_qs_base64_json',
         key: 'email',
-        encoding: IdentityEncoding.IDENTITY_ENCODING_BASE64,
+        encoding: TraitEncoding.TRAIT_ENCODING_BASE64,
       })
       watcher.add('foo_qs_idsp_noop', {
-        type: IdentityType.IDENTITY_TYPE_QUERY_STRING,
-        format: IdentityFormat.IDENTITY_FORMAT_STRING,
+        type: TraitType.TRAIT_TYPE_QUERY_STRING,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
         variable: 'foo_qs_noop',
-        encoding: IdentityEncoding.IDENTITY_ENCODING_NONE,
+        encoding: TraitEncoding.TRAIT_ENCODING_NONE,
       })
       watcher.add('foo_provider', () => Promise.resolve(['bar_provider']))
       watcher.add('bad_provider', () => Promise.reject('expected to throw'))
       expect(() => {
-        watcher.add('corrupt_type', {} as /* Trait */ Identity)
+        watcher.add('corrupt_type', {} as Trait)
       }).toThrow()
       const listener = jest.fn().mockName('listener') // .mockImplementation(console.log)
       const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
       watcher.addListener('userAttribute', listener)
       watcher.once('userAttribute', onceListener)
-      watcher.start('userAttribute')
-      watcher.start('userAttribute')
-      watcher.notify('userAttribute')
+      watcher.start(TraitName.USER_ATTRIBUTE)
+      watcher.start(TraitName.USER_ATTRIBUTE)
+      watcher.notify(TraitName.USER_ATTRIBUTE)
       w['foo_win'] = 'bar_win2'
-      watcher.notify('userAttribute')
-      watcher.notify('userAttribute')
-      watcher.notify('userAttribute')
+      watcher.notify(TraitName.USER_ATTRIBUTE)
+      watcher.notify(TraitName.USER_ATTRIBUTE)
+      watcher.notify(TraitName.USER_ATTRIBUTE)
       watcher.stop()
       watcher.stop()
 

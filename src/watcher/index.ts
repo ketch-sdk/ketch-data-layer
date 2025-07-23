@@ -1,16 +1,5 @@
 import { EventEmitter } from 'events'
-import {
-  Identities,
-  Identity,
-  IdentityFormat,
-  IdentityType,
-  IdentityEncoding,
-  // Traits,
-  // Trait,
-  // TraitFormat,
-  // TraitType,
-  // TraitEncoding,
-} from '@ketch-sdk/ketch-types'
+import { Identity, Traits, Trait, TraitFormat, TraitType, TraitEncoding, TraitName } from '@ketch-sdk/ketch-types'
 import { fetcher as cookieFetcher } from '../cookie'
 import { fetcher as dataLayerFetcher } from '../dataLayer'
 import { fetcher as windowFetcher } from '../window'
@@ -41,7 +30,7 @@ export default class Watcher {
   private readonly _listenerOptions: ListenerOptions
   private _intervalId?: number
   private _fetchers: Map<string, (w: Window) => Promise<string[]>>
-  private _attributes: Identities // Traits
+  private _attributes: Traits
   private _emitter: EventEmitter
 
   /**
@@ -64,7 +53,7 @@ export default class Watcher {
    * @param name The name of the trait.
    * @param attribute The definition of the trait.
    */
-  add(name: string, attribute: Identity /* | Trait */ | (() => Promise<string[]>)) {
+  add(name: string, attribute: Identity | Trait | (() => Promise<string[]>)) {
     let structure: Structure
     let encoding: Encoding
 
@@ -74,19 +63,19 @@ export default class Watcher {
     }
 
     switch (attribute.format) {
-      case /* TraitFormat.TRAIT_FORMAT_JSON */ IdentityFormat.IDENTITY_FORMAT_JSON:
+      case TraitFormat.TRAIT_FORMAT_JSON:
         structure = jsonStructure
         break
 
-      case /* TraitFormat.TRAIT_FORMAT_JWT */ IdentityFormat.IDENTITY_FORMAT_JWT:
+      case TraitFormat.TRAIT_FORMAT_JWT:
         structure = jwtStructure
         break
 
-      case /* TraitFormat.TRAIT_FORMAT_QUERY */ IdentityFormat.IDENTITY_FORMAT_QUERY:
+      case TraitFormat.TRAIT_FORMAT_QUERY:
         structure = queryStructure
         break
 
-      case /* TraitFormat.TRAIT_FORMAT_SEMICOLON */ IdentityFormat.IDENTITY_FORMAT_SEMICOLON:
+      case TraitFormat.TRAIT_FORMAT_SEMICOLON:
         structure = semicolonStructure
         break
 
@@ -97,7 +86,7 @@ export default class Watcher {
     const key = attribute.key || 'value'
 
     switch (attribute.encoding) {
-      case /* TraitEncoding.TRAIT_ENCODING_BASE64 */ IdentityEncoding.IDENTITY_ENCODING_BASE64:
+      case TraitEncoding.TRAIT_ENCODING_BASE64:
         encoding = base64Encoding
         break
 
@@ -106,7 +95,7 @@ export default class Watcher {
     }
 
     switch (attribute.type) {
-      case /* TraitType.TRAIT_TYPE_COOKIE */ IdentityType.IDENTITY_TYPE_COOKIE:
+      case TraitType.TRAIT_TYPE_COOKIE:
         this._fetchers.set(name, (w: Window) =>
           cookieFetcher(w, attribute.variable).then(values =>
             encoding(values)
@@ -116,7 +105,7 @@ export default class Watcher {
         )
         break
 
-      case /* TraitType.TRAIT_TYPE_DATA_LAYER */ IdentityType.IDENTITY_TYPE_DATA_LAYER:
+      case TraitType.TRAIT_TYPE_DATA_LAYER:
         this._fetchers.set(name, (w: Window) =>
           dataLayerFetcher(w, attribute.variable).then(values =>
             encoding(values)
@@ -126,7 +115,7 @@ export default class Watcher {
         )
         break
 
-      case /* TraitType.TRAIT_TYPE_WINDOW */ IdentityType.IDENTITY_TYPE_WINDOW:
+      case TraitType.TRAIT_TYPE_WINDOW:
         this._fetchers.set(name, (w: Window) =>
           windowFetcher(w, attribute.variable).then(values =>
             encoding(values)
@@ -136,7 +125,7 @@ export default class Watcher {
         )
         break
 
-      case /* TraitType.TRAIT_TYPE_LOCAL_STORAGE */ IdentityType.IDENTITY_TYPE_LOCAL_STORAGE:
+      case TraitType.TRAIT_TYPE_LOCAL_STORAGE:
         this._fetchers.set(name, (w: Window) =>
           localStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
@@ -146,7 +135,7 @@ export default class Watcher {
         )
         break
 
-      case /* TraitType.TRAIT_TYPE_SESSION_STORAGE */ IdentityType.IDENTITY_TYPE_SESSION_STORAGE:
+      case TraitType.TRAIT_TYPE_SESSION_STORAGE:
         this._fetchers.set(name, (w: Window) =>
           sessionStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
@@ -156,7 +145,7 @@ export default class Watcher {
         )
         break
 
-      case /* TraitType.TRAIT_TYPE_QUERY_STRING */ IdentityType.IDENTITY_TYPE_QUERY_STRING:
+      case TraitType.TRAIT_TYPE_QUERY_STRING:
         this._fetchers.set(name, (w: Window) =>
           queryStringFetcher(w, attribute.variable).then(values =>
             encoding(values)
@@ -166,7 +155,7 @@ export default class Watcher {
         )
         break
 
-      case /* TraitType.TRAIT_TYPE_MANAGED */ IdentityType.IDENTITY_TYPE_MANAGED:
+      case TraitType.TRAIT_TYPE_MANAGED:
         this._fetchers.set(name, (w: Window) =>
           managedFetcher(w, attribute.variable).then(values =>
             encoding(values)
@@ -184,7 +173,7 @@ export default class Watcher {
   /**
    * Starts watching for traits.
    */
-  async start(type?: 'identity' | 'userAttribute') {
+  async start(type?: TraitName) {
     if (this._intervalId) {
       return
     }
@@ -216,8 +205,8 @@ export default class Watcher {
   /**
    * Fetches and notifies about traits.
    */
-  async notify(type?: 'identity' | 'userAttribute'): Promise<void> {
-    const attributes: /* Traits */ Identities = {}
+  async notify(type?: TraitName): Promise<void> {
+    const attributes: Traits = {}
 
     for (const [key, fetcher] of this._fetchers.entries()) {
       try {
@@ -235,7 +224,7 @@ export default class Watcher {
     // This is to ensure that absent attributes do not hold up the event loop
     // (if it is waiting for attributes object to be fulfilled)
     if (!deepEqual(attributes, this._attributes) || Object.keys(this._attributes).length === 0) {
-      const message = type || 'identity'
+      const message = type || TraitName.IDENTITY
       this._emitter.emit(message, attributes)
       this._attributes = attributes
     }
