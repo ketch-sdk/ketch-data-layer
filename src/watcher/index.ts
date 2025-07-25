@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { Identities, Identity, IdentityFormat, IdentityType, IdentityEncoding } from '@ketch-sdk/ketch-types'
+import { Identity, Traits, Trait, TraitFormat, TraitType, TraitEncoding, TraitName } from '@ketch-sdk/ketch-types'
 import { fetcher as cookieFetcher } from '../cookie'
 import { fetcher as dataLayerFetcher } from '../dataLayer'
 import { fetcher as windowFetcher } from '../window'
@@ -20,17 +20,17 @@ import { Encoding } from '../encoding'
 import deepEqual from 'nano-equal'
 import { getLogger } from '@ketch-sdk/ketch-logging'
 
-const log = getLogger('identity')
+const log = getLogger('trait')
 
 /**
- * Watcher provides a mechanism for watching for identities.
+ * Watcher provides a mechanism for watching for traits.
  */
 export default class Watcher {
   private readonly _w: Window
   private readonly _listenerOptions: ListenerOptions
   private _intervalId?: number
   private _fetchers: Map<string, (w: Window) => Promise<string[]>>
-  private _identities: Identities
+  private _attributes: Traits
   private _emitter: EventEmitter
 
   /**
@@ -44,38 +44,38 @@ export default class Watcher {
     this._w = w
     this._listenerOptions = options
     this._fetchers = new Map<string, (w: Window) => Promise<string[]>>()
-    this._identities = {}
+    this._attributes = {}
   }
 
   /**
-   * Add an identity with the given name and definition.
+   * Add a trait with the given name and definition.
    *
-   * @param name The name of the identity.
-   * @param identity The definition of the identity.
+   * @param name The name of the trait.
+   * @param attribute The definition of the trait.
    */
-  add(name: string, identity: Identity | (() => Promise<string[]>)) {
+  add(name: string, attribute: Identity | Trait | (() => Promise<string[]>)) {
     let structure: Structure
     let encoding: Encoding
 
-    if (typeof identity === 'function') {
-      this._fetchers.set(name, () => identity())
+    if (typeof attribute === 'function') {
+      this._fetchers.set(name, () => attribute())
       return
     }
 
-    switch (identity.format) {
-      case IdentityFormat.IDENTITY_FORMAT_JSON:
+    switch (attribute.format) {
+      case TraitFormat.TRAIT_FORMAT_JSON:
         structure = jsonStructure
         break
 
-      case IdentityFormat.IDENTITY_FORMAT_JWT:
+      case TraitFormat.TRAIT_FORMAT_JWT:
         structure = jwtStructure
         break
 
-      case IdentityFormat.IDENTITY_FORMAT_QUERY:
+      case TraitFormat.TRAIT_FORMAT_QUERY:
         structure = queryStructure
         break
 
-      case IdentityFormat.IDENTITY_FORMAT_SEMICOLON:
+      case TraitFormat.TRAIT_FORMAT_SEMICOLON:
         structure = semicolonStructure
         break
 
@@ -83,10 +83,10 @@ export default class Watcher {
         structure = stringStructure
     }
 
-    const key = identity.key || 'value'
+    const key = attribute.key || 'value'
 
-    switch (identity.encoding) {
-      case IdentityEncoding.IDENTITY_ENCODING_BASE64:
+    switch (attribute.encoding) {
+      case TraitEncoding.TRAIT_ENCODING_BASE64:
         encoding = base64Encoding
         break
 
@@ -94,10 +94,10 @@ export default class Watcher {
         encoding = noopEncoding
     }
 
-    switch (identity.type) {
-      case IdentityType.IDENTITY_TYPE_COOKIE:
+    switch (attribute.type) {
+      case TraitType.TRAIT_TYPE_COOKIE:
         this._fetchers.set(name, (w: Window) =>
-          cookieFetcher(w, identity.variable).then(values =>
+          cookieFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
               .map(values => String(values[key])),
@@ -105,9 +105,9 @@ export default class Watcher {
         )
         break
 
-      case IdentityType.IDENTITY_TYPE_DATA_LAYER:
+      case TraitType.TRAIT_TYPE_DATA_LAYER:
         this._fetchers.set(name, (w: Window) =>
-          dataLayerFetcher(w, identity.variable).then(values =>
+          dataLayerFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
               .map(values => String(values[key])),
@@ -115,9 +115,9 @@ export default class Watcher {
         )
         break
 
-      case IdentityType.IDENTITY_TYPE_WINDOW:
+      case TraitType.TRAIT_TYPE_WINDOW:
         this._fetchers.set(name, (w: Window) =>
-          windowFetcher(w, identity.variable).then(values =>
+          windowFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
               .map(values => String(values[key])),
@@ -125,9 +125,9 @@ export default class Watcher {
         )
         break
 
-      case IdentityType.IDENTITY_TYPE_LOCAL_STORAGE:
+      case TraitType.TRAIT_TYPE_LOCAL_STORAGE:
         this._fetchers.set(name, (w: Window) =>
-          localStorageFetcher(w, identity.variable).then(values =>
+          localStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
               .map(values => String(values[key])),
@@ -135,9 +135,9 @@ export default class Watcher {
         )
         break
 
-      case IdentityType.IDENTITY_TYPE_SESSION_STORAGE:
+      case TraitType.TRAIT_TYPE_SESSION_STORAGE:
         this._fetchers.set(name, (w: Window) =>
-          sessionStorageFetcher(w, identity.variable).then(values =>
+          sessionStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
               .map(values => String(values[key])),
@@ -145,9 +145,9 @@ export default class Watcher {
         )
         break
 
-      case IdentityType.IDENTITY_TYPE_QUERY_STRING:
+      case TraitType.TRAIT_TYPE_QUERY_STRING:
         this._fetchers.set(name, (w: Window) =>
-          queryStringFetcher(w, identity.variable).then(values =>
+          queryStringFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
               .map(values => String(values[key])),
@@ -155,9 +155,9 @@ export default class Watcher {
         )
         break
 
-      case IdentityType.IDENTITY_TYPE_MANAGED:
+      case TraitType.TRAIT_TYPE_MANAGED:
         this._fetchers.set(name, (w: Window) =>
-          managedFetcher(w, identity.variable).then(values =>
+          managedFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
               .map(values => String(values[key])),
@@ -166,14 +166,14 @@ export default class Watcher {
         break
 
       default:
-        throw new Error(`unsupported identity type ${identity.type} for ${name}`)
+        throw new Error(`unsupported trait type ${attribute.type} for ${name}`)
     }
   }
 
   /**
-   * Starts watching for identities.
+   * Starts watching for traits.
    */
-  async start() {
+  async start(type?: TraitName) {
     if (this._intervalId) {
       return
     }
@@ -186,11 +186,11 @@ export default class Watcher {
       }
     }
 
-    return this.notify()
+    return this.notify(type)
   }
 
   /**
-   * Stops watching for identities.
+   * Stops watching for traits.
    */
   stop() {
     if (!this._intervalId) {
@@ -203,26 +203,30 @@ export default class Watcher {
   }
 
   /**
-   * Fetches and notifies about identities.
+   * Fetches and notifies about traits.
    */
-  async notify(): Promise<void> {
-    const identities: Identities = {}
+  async notify(type?: TraitName): Promise<void> {
+    const attributes: Traits = {}
 
     for (const [key, fetcher] of this._fetchers.entries()) {
       try {
         const values = await fetcher(this._w)
 
         for (const value of values) {
-          identities[key] = value
+          attributes[key] = value
         }
       } catch (e) {
-        log.warn(`failed to fetch identity for ${key}: ${e}`)
+        log.warn(`failed to fetch trait for ${key}: ${e}`)
       }
     }
 
-    if (!deepEqual(identities, this._identities)) {
-      this._emitter.emit('identity', identities)
-      this._identities = identities
+    // If there are new attributes or no attributes at all, emit the event
+    // This is to ensure that absent attributes do not hold up the event loop
+    // (if it is waiting for attributes object to be fulfilled)
+    if (!deepEqual(attributes, this._attributes) || Object.keys(this._attributes).length === 0) {
+      const message = type || TraitName.IDENTITY
+      this._emitter.emit(message, attributes)
+      this._attributes = attributes
     }
   }
 
