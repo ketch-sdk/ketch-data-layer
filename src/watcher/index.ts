@@ -173,7 +173,7 @@ export default class Watcher {
   /**
    * Starts watching for traits.
    */
-  async start(type?: TraitName) {
+  async start(type?: TraitName, returnEarly?: boolean) {
     if (this._intervalId) {
       return
     }
@@ -186,7 +186,7 @@ export default class Watcher {
       }
     }
 
-    return this.notify(type)
+    return this.notify(type, returnEarly)
   }
 
   /**
@@ -205,7 +205,7 @@ export default class Watcher {
   /**
    * Fetches and notifies about traits.
    */
-  async notify(type?: TraitName): Promise<void> {
+  async notify(type?: TraitName, returnEarly?: boolean): Promise<void> {
     const attributes: Traits = {}
 
     for (const [key, fetcher] of this._fetchers.entries()) {
@@ -223,7 +223,7 @@ export default class Watcher {
     // If there are new attributes or no attributes at all, emit the event
     // This is to ensure that absent attributes do not hold up the event loop
     // (if it is waiting for attributes object to be fulfilled)
-    if (!deepEqual(attributes, this._attributes) || Object.keys(this._attributes).length === 0) {
+    if (!deepEqual(attributes, this._attributes) || (returnEarly && Object.keys(this._attributes).length === 0)) {
       const message = type || TraitName.IDENTITY
       this._emitter.emit(message, attributes)
       this._attributes = attributes
