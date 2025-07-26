@@ -119,7 +119,7 @@ describe('watcher', () => {
       const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
       watcher.addListener('identity', listener)
       watcher.once('identity', onceListener)
-      watcher.start()
+      watcher.start(TraitName.IDENTITY, false)
       watcher.start()
       watcher.notify()
       w['foo_win'] = 'bar_win2'
@@ -275,9 +275,9 @@ describe('watcher', () => {
       const onceListener = jest.fn().mockName('listener') // .mockImplementation(console.log)
       watcher.addListener('userAttribute', listener)
       watcher.once('userAttribute', onceListener)
-      watcher.start(TraitName.USER_ATTRIBUTE)
-      watcher.start(TraitName.USER_ATTRIBUTE)
-      watcher.notify(TraitName.USER_ATTRIBUTE)
+      watcher.start(TraitName.USER_ATTRIBUTE, true)
+      watcher.start(TraitName.USER_ATTRIBUTE, true)
+      watcher.notify(TraitName.USER_ATTRIBUTE, true)
       w['foo_win'] = 'bar_win2'
       watcher.notify(TraitName.USER_ATTRIBUTE)
       watcher.notify(TraitName.USER_ATTRIBUTE)
