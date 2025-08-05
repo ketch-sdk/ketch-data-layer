@@ -60,5 +60,9 @@
   },
   "files": [
     "dist/"
-  ]
+  ],
+  "overrides": {
+    "form-data": "^4.0.4",
+    "brace-expansion": "^2.0.2"
+  }
 }
