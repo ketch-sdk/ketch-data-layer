@@ -112,7 +112,7 @@ export default class Watcher {
           cookieFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => getDotValue(values, key)),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -122,7 +122,7 @@ export default class Watcher {
           dataLayerFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => getDotValue(values, key)),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -132,7 +132,7 @@ export default class Watcher {
           windowFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => getDotValue(values, key)),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -142,7 +142,7 @@ export default class Watcher {
           localStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => getDotValue(values, key)),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -152,7 +152,7 @@ export default class Watcher {
           sessionStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => getDotValue(values, key)),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -162,7 +162,7 @@ export default class Watcher {
           queryStringFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => getDotValue(values, key)),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -172,7 +172,7 @@ export default class Watcher {
           managedFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => getDotValue(values, key)),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
