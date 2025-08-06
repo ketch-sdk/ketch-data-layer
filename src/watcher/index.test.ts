@@ -28,6 +28,7 @@ describe('watcher', () => {
       w['foo_win'] = 'bar_win'
       w['foo_win_qs'] = 'bar1=val1;bar2=val2'
       window.document.cookie = 'foo_cook=bar_cook'
+      window.document.cookie = 'test={"foo":{"bar":{"baz":1}}}'
       window.dataLayer = window.dataLayer || []
       window.dataLayer.push({ foo_dl: 'bar_dl1=val_dl&bar_dl2=val_dl2' })
       window.dataLayer.push({ foo_dl2: { id: 123 } })
@@ -56,6 +57,12 @@ describe('watcher', () => {
         type: IdentityType.IDENTITY_TYPE_COOKIE,
         format: IdentityFormat.IDENTITY_FORMAT_STRING,
         variable: 'foo_cook',
+      })
+      watcher.add('test_idsp', {
+        type: IdentityType.IDENTITY_TYPE_COOKIE,
+        format: IdentityFormat.IDENTITY_FORMAT_JSON,
+        variable: 'test',
+        key: 'foo.bar.baz',
       })
       watcher.add('foo_dl_idsp', {
         type: IdentityType.IDENTITY_TYPE_DATA_LAYER,
@@ -138,6 +145,7 @@ describe('watcher', () => {
         expect(listener).toHaveBeenNthCalledWith(1, {
           foo_win_idsp: 'bar_win',
           foo_cook_idsp: 'bar_cook',
+          test_idsp: '1',
           foo_dl_idsp: 'val_dl2',
           foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',
@@ -153,6 +161,7 @@ describe('watcher', () => {
         expect(listener).toHaveBeenNthCalledWith(2, {
           foo_win_idsp: 'bar_win2',
           foo_cook_idsp: 'bar_cook',
+          test_idsp: '1',
           foo_dl_idsp: 'val_dl2',
           foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',
@@ -184,6 +193,7 @@ describe('watcher', () => {
       w['foo_win'] = 'bar_win'
       w['foo_win_qs'] = 'bar1=val1;bar2=val2'
       window.document.cookie = 'foo_cook=bar_cook'
+      window.document.cookie = 'test={"foo":{"bar":{"baz":1}}}'
       window.dataLayer = window.dataLayer || []
       window.dataLayer.push({ foo_dl: 'bar_dl1=val_dl&bar_dl2=val_dl2' })
       window.dataLayer.push({ foo_dl2: { id: 123 } })
@@ -212,6 +222,12 @@ describe('watcher', () => {
         type: TraitType.TRAIT_TYPE_COOKIE,
         format: TraitFormat.TRAIT_FORMAT_STRING,
         variable: 'foo_cook',
+      })
+      watcher.add('test_idsp', {
+        type: TraitType.TRAIT_TYPE_COOKIE,
+        format: TraitFormat.TRAIT_FORMAT_JSON,
+        variable: 'test',
+        key: 'bad.path',
       })
       watcher.add('foo_dl_idsp', {
         type: TraitType.TRAIT_TYPE_DATA_LAYER,
@@ -294,6 +310,7 @@ describe('watcher', () => {
         expect(listener).toHaveBeenNthCalledWith(1, {
           foo_win_idsp: 'bar_win',
           foo_cook_idsp: 'bar_cook',
+          test_idsp: 'undefined',
           foo_dl_idsp: 'val_dl2',
           foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',
@@ -309,6 +326,7 @@ describe('watcher', () => {
         expect(listener).toHaveBeenNthCalledWith(2, {
           foo_win_idsp: 'bar_win2',
           foo_cook_idsp: 'bar_cook',
+          test_idsp: 'undefined',
           foo_dl_idsp: 'val_dl2',
           foo_dl2_idsp: '123',
           foo_qs_idsp: 'bar_qs',

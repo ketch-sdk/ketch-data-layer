@@ -94,13 +94,25 @@ export default class Watcher {
         encoding = noopEncoding
     }
 
+    // Get a value from an object (JSON) by key dot notation
+    const getDotValue = (obj: any, key: string) => {
+      const keys = key.split('.')
+      return keys.reduce((v: any, k: string) => {
+        if (v && typeof v === 'object' && k in v) {
+          return v[k]
+        } else {
+          return undefined
+        }
+      }, obj)
+    }
+
     switch (attribute.type) {
       case TraitType.TRAIT_TYPE_COOKIE:
         this._fetchers.set(name, (w: Window) =>
           cookieFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(values[key])),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -110,7 +122,7 @@ export default class Watcher {
           dataLayerFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(values[key])),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -120,7 +132,7 @@ export default class Watcher {
           windowFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(values[key])),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -130,7 +142,7 @@ export default class Watcher {
           localStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(values[key])),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -140,7 +152,7 @@ export default class Watcher {
           sessionStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(values[key])),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -150,7 +162,7 @@ export default class Watcher {
           queryStringFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(values[key])),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
@@ -160,7 +172,7 @@ export default class Watcher {
           managedFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(values[key])),
+              .map(values => String(getDotValue(values, key))),
           ),
         )
         break
