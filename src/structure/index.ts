@@ -1,3 +1,3 @@
 import type { Mapper } from '../mapper'
 
-export declare type Structure = (value: any) => Mapper
+export declare type Structure = (value: any) => Mapper | string

@@ -343,4 +343,142 @@ describe('watcher', () => {
       }, 100)
     })
   })
+
+  describe('JWT verifierID functionality', () => {
+    const testJWT =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwi' +
+      'aWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+
+    it('returns raw JWT token when verifierID is present', async () => {
+      const watcher = new Watcher(window)
+      
+      // Set up session storage with JWT token (following existing test pattern)
+      window.sessionStorage.setItem('jwt_token', testJWT)
+      
+      // Add JWT identity with verifierID
+      watcher.add('jwt_with_verifier', {
+        type: TraitType.TRAIT_TYPE_SESSION_STORAGE,
+        format: TraitFormat.TRAIT_FORMAT_JWT,
+        variable: 'jwt_token',
+        key: 'name',
+        verifierID: 'verifier123'  // This should cause raw JWT to be returned
+      } as any)
+
+      return new Promise<void>((resolve) => {
+        const listener = jest.fn()
+        watcher.addListener('userAttribute', listener)
+        
+        watcher.start(TraitName.USER_ATTRIBUTE).then(() => {
+          setTimeout(() => {
+            expect(listener).toHaveBeenCalledWith({
+              jwt_with_verifier: testJWT  // Should be the raw JWT, not parsed claims
+            })
+            resolve()
+          }, 50)
+        })
+      })
+    })
+
+    it('returns parsed JWT claims when verifierID is empty', async () => {
+      const watcher = new Watcher(window)
+      
+      // Set up session storage with JWT token
+      window.sessionStorage.setItem('jwt_token_empty', testJWT)
+      
+      // Add JWT identity without verifierID
+      watcher.add('jwt_without_verifier', {
+        type: TraitType.TRAIT_TYPE_SESSION_STORAGE,
+        format: TraitFormat.TRAIT_FORMAT_JWT,
+        variable: 'jwt_token_empty',
+        key: 'name',
+        verifierID: ''  // Empty verifierID should parse JWT
+      } as any)
+
+      return new Promise<void>((resolve) => {
+        const listener = jest.fn()
+        watcher.addListener('userAttribute', listener)
+        
+        watcher.start(TraitName.USER_ATTRIBUTE).then(() => {
+          setTimeout(() => {
+            expect(listener).toHaveBeenCalledWith({
+              jwt_without_verifier: 'John Doe'  // Should be parsed claim value
+            })
+            resolve()
+          }, 50)
+        })
+      })
+    })
+
+    it('returns parsed JWT claims when verifierID is not provided', async () => {
+      const watcher = new Watcher(window)
+      
+      // Set up session storage with JWT token
+      window.sessionStorage.setItem('jwt_token_none', testJWT)
+      
+      // Add JWT identity without verifierID property
+      watcher.add('jwt_no_verifier', {
+        type: TraitType.TRAIT_TYPE_SESSION_STORAGE,
+        format: TraitFormat.TRAIT_FORMAT_JWT,
+        variable: 'jwt_token_none',
+        key: 'name'
+        // No verifierID property at all
+      } as any)
+
+      return new Promise<void>((resolve) => {
+        const listener = jest.fn()
+        watcher.addListener('userAttribute', listener)
+        
+        watcher.start(TraitName.USER_ATTRIBUTE).then(() => {
+          setTimeout(() => {
+            expect(listener).toHaveBeenCalledWith({
+              jwt_no_verifier: 'John Doe'  // Should be parsed claim value
+            })
+            resolve()
+          }, 50)
+        })
+      })
+    })
+
+    it('handles nested key extraction for parsed JWT', async () => {
+      const watcher = new Watcher(window)
+      
+      // JWT with nested claims - properly base64 encoded
+      const nestedClaims = {
+        sub: '1234567890',
+        name: 'John Doe', 
+        user: {
+          email: 'john@example.com',
+          role: 'admin'
+        },
+        iat: 1516239022
+      }
+      const encodedClaims = btoa(JSON.stringify(nestedClaims))
+      const nestedJWT = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${encodedClaims}.invalid_signature`
+      
+      // Set up session storage with nested JWT token
+      window.sessionStorage.setItem('nested_jwt', nestedJWT)
+
+      // Add JWT identity without verifierID and nested key path
+      watcher.add('jwt_nested_key', {
+        type: TraitType.TRAIT_TYPE_SESSION_STORAGE,
+        format: TraitFormat.TRAIT_FORMAT_JWT,
+        variable: 'nested_jwt',
+        key: 'user.email'  // Nested key extraction
+      } as any)
+
+      return new Promise<void>((resolve) => {
+        const listener = jest.fn()
+        watcher.addListener('userAttribute', listener)
+        
+        watcher.start(TraitName.USER_ATTRIBUTE).then(() => {
+          setTimeout(() => {
+            expect(listener).toHaveBeenCalledWith({
+              jwt_nested_key: 'john@example.com'  // Should extract nested value
+            })
+            resolve()
+          }, 50)
+        })
+      })
+    })
+  })
 })
