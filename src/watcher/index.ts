@@ -62,13 +62,22 @@ export default class Watcher {
       return
     }
 
+    // Special handling for JWT with verifierID - create a bound structure function
+    const isJWTWithVerifier =
+      attribute.format === TraitFormat.TRAIT_FORMAT_JWT && attribute.verifierID && attribute.verifierID.length > 0
+
     switch (attribute.format) {
       case TraitFormat.TRAIT_FORMAT_JSON:
         structure = jsonStructure
         break
 
       case TraitFormat.TRAIT_FORMAT_JWT:
-        structure = jwtStructure
+        if (isJWTWithVerifier) {
+          // Create a bound function that passes verifierID to jwtStructure
+          structure = (value: any) => jwtStructure(value, attribute.verifierID)
+        } else {
+          structure = jwtStructure
+        }
         break
 
       case TraitFormat.TRAIT_FORMAT_QUERY:
@@ -106,13 +115,24 @@ export default class Watcher {
       }, obj)
     }
 
+    // Helper function to handle structure parsing results
+    // For JWT with verifierID, structure returns raw JWT string, otherwise parsed object
+    const extractValue = (structuredValue: any, key: string) => {
+      // If it's a string (raw JWT), return it directly
+      if (typeof structuredValue === 'string') {
+        return structuredValue
+      }
+      // Otherwise, extract the key using dot notation
+      return String(getDotValue(structuredValue, key))
+    }
+
     switch (attribute.type) {
       case TraitType.TRAIT_TYPE_COOKIE:
         this._fetchers.set(name, (w: Window) =>
           cookieFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(getDotValue(values, key))),
+              .map(values => extractValue(values, key)),
           ),
         )
         break
@@ -122,7 +142,7 @@ export default class Watcher {
           dataLayerFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(getDotValue(values, key))),
+              .map(values => extractValue(values, key)),
           ),
         )
         break
@@ -132,7 +152,7 @@ export default class Watcher {
           windowFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(getDotValue(values, key))),
+              .map(values => extractValue(values, key)),
           ),
         )
         break
@@ -142,7 +162,7 @@ export default class Watcher {
           localStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(getDotValue(values, key))),
+              .map(values => extractValue(values, key)),
           ),
         )
         break
@@ -152,7 +172,7 @@ export default class Watcher {
           sessionStorageFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(getDotValue(values, key))),
+              .map(values => extractValue(values, key)),
           ),
         )
         break
@@ -162,7 +182,7 @@ export default class Watcher {
           queryStringFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(getDotValue(values, key))),
+              .map(values => extractValue(values, key)),
           ),
         )
         break
@@ -172,7 +192,7 @@ export default class Watcher {
           managedFetcher(w, attribute.variable).then(values =>
             encoding(values)
               .map(structure)
-              .map(values => String(getDotValue(values, key))),
+              .map(values => extractValue(values, key)),
           ),
         )
         break
