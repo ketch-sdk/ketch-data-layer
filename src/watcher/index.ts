@@ -63,9 +63,8 @@ export default class Watcher {
     }
 
     // Special handling for JWT with verifierID - create a bound structure function
-    const isJWTWithVerifier = attribute.format === TraitFormat.TRAIT_FORMAT_JWT &&
-                              attribute.verifierID &&
-                              attribute.verifierID.length > 0
+    const isJWTWithVerifier =
+      attribute.format === TraitFormat.TRAIT_FORMAT_JWT && attribute.verifierID && attribute.verifierID.length > 0
 
     switch (attribute.format) {
       case TraitFormat.TRAIT_FORMAT_JSON:
