@@ -3,5 +3,8 @@ export default async function queryStringFetcher(w: Window, name: string): Promi
     return []
   }
 
-  return new URLSearchParams(w.location.search).getAll(name).filter(x => x !== '0')
+  // Replace + with %2B to preserve + signs when URLSearchParams decodes
+  const sanitizedSearch = w.location.search.replace(/\+/g, '%2B')
+
+  return new URLSearchParams(sanitizedSearch).getAll(name).filter(x => x !== '0')
 }
