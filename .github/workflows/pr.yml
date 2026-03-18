@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
       - name: Generate next version
         id: version
-        uses: conventional-actions/next-version@v1
+        uses: conventional-actions/next-version@1b3e4803a0bdf7435ba7bb5ace077445ed54e82a # v1.1.8
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
