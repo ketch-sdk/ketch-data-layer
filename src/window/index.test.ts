@@ -238,6 +238,54 @@ describe('window', () => {
       expect(actual).toStrictEqual(['was-undef'])
     })
 
+    it('handles commas inside string arguments', async () => {
+      const w = {} as Window
+      w['obj'] = {
+        echo: (val: string) => val,
+      }
+
+      const actual = await fetcher(w, "obj.echo('hello, world')")
+      expect(actual).toStrictEqual(['hello, world'])
+    })
+
+    it('handles commas inside double-quoted string arguments', async () => {
+      const w = {} as Window
+      w['obj'] = {
+        join: (a: string, b: string) => `${a}|${b}`,
+      }
+
+      const actual = await fetcher(w, 'obj.join("a, b", "c, d")')
+      expect(actual).toStrictEqual(['a, b|c, d'])
+    })
+
+    it('returns empty when function result is null and path continues', async () => {
+      const w = {} as Window
+      w['cache'] = {
+        get: () => null,
+      }
+
+      const actual = await fetcher(w, 'cache.get().email')
+      expect(actual).toStrictEqual([])
+    })
+
+    it('returns empty when function result is undefined and path continues', async () => {
+      const w = {} as Window
+      w['cache'] = {
+        get: () => undefined,
+      }
+
+      const actual = await fetcher(w, 'cache.get().email')
+      expect(actual).toStrictEqual([])
+    })
+
+    it('returns empty when mid-path value is a primitive', async () => {
+      const w = {} as Window
+      w['obj'] = { count: 42 }
+
+      const actual = await fetcher(w, 'obj.count.something')
+      expect(actual).toStrictEqual([])
+    })
+
     it('passes bare identifier argument as string', async () => {
       const w = {} as Window
       w['obj'] = {

@@ -34,26 +34,50 @@ function splitPath(p: string): string[] {
   return parts
 }
 
+function splitArgs(raw: string): string[] {
+  const args: string[] = []
+  let current = ''
+  let quote: string | null = null
+
+  for (const ch of raw) {
+    if (quote) {
+      current += ch
+      if (ch === quote) quote = null
+    } else if (ch === "'" || ch === '"') {
+      current += ch
+      quote = ch
+    } else if (ch === ',') {
+      args.push(current.trim())
+      current = ''
+    } else {
+      current += ch
+    }
+  }
+  const last = current.trim()
+  if (last) args.push(last)
+  return args
+}
+
+function parseArg(arg: string): any {
+  if ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith('"') && arg.endsWith('"'))) {
+    return arg.slice(1, -1)
+  }
+  const num = Number(arg)
+  if (arg !== '' && !isNaN(num)) return num
+  if (arg === 'true') return true
+  if (arg === 'false') return false
+  if (arg === 'null') return null
+  if (arg === 'undefined') return undefined
+  return arg
+}
+
 function parseFunctionCall(part: string): { name: string; args: any[] } | null {
   const match = part.match(/^(\w+)\((.*)\)$/)
   if (!match) return null
   const name = match[1]
   const rawArgs = match[2].trim()
   if (rawArgs === '') return { name, args: [] }
-  const args = rawArgs.split(',').map(arg => {
-    arg = arg.trim()
-    if ((arg.startsWith("'") && arg.endsWith("'")) || (arg.startsWith('"') && arg.endsWith('"'))) {
-      return arg.slice(1, -1)
-    }
-    const num = Number(arg)
-    if (!isNaN(num)) return num
-    if (arg === 'true') return true
-    if (arg === 'false') return false
-    if (arg === 'null') return null
-    if (arg === 'undefined') return undefined
-    return arg
-  })
-  return { name, args }
+  return { name, args: splitArgs(rawArgs).map(parseArg) }
 }
 
 function getProperty(w: Window, p: string): string | null {
@@ -64,6 +88,8 @@ function getProperty(w: Window, p: string): string | null {
   while (parts.length > 0) {
     if (parts[0] === 'window') {
       parts.shift()
+    } else if (context == null) {
+      return null
     } else if (typeof context === 'object') {
       const call = parseFunctionCall(parts[0])
       if (call) {
