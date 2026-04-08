@@ -79,11 +79,6 @@ function getProperty(w: Window, p: string): string | null {
         previousContext = context
         context = context[parts.shift() as string]
       }
-    } else if (typeof context === 'function') {
-      const newContext = context.call(previousContext)
-      previousContext = context
-      context = newContext
-      parts.shift()
     } else {
       return null
     }

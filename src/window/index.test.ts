@@ -197,5 +197,55 @@ describe('window', () => {
       const actual = await fetcher(w, "obj.notAFn('arg')")
       expect(actual).toStrictEqual([])
     })
+
+    it('parses boolean true argument', async () => {
+      const w = {} as Window
+      w['obj'] = {
+        check: (val: boolean) => (val ? 'yes' : 'no'),
+      }
+
+      const actual = await fetcher(w, 'obj.check(true)')
+      expect(actual).toStrictEqual(['yes'])
+    })
+
+    it('parses boolean false argument', async () => {
+      const w = {} as Window
+      w['obj'] = {
+        check: (val: boolean) => (val ? 'yes' : 'no'),
+      }
+
+      const actual = await fetcher(w, 'obj.check(false)')
+      expect(actual).toStrictEqual(['no'])
+    })
+
+    it('parses null argument', async () => {
+      const w = {} as Window
+      w['obj'] = {
+        describe: (val: any) => (val === null ? 'was-null' : 'not-null'),
+      }
+
+      const actual = await fetcher(w, 'obj.describe(null)')
+      expect(actual).toStrictEqual(['was-null'])
+    })
+
+    it('parses undefined argument', async () => {
+      const w = {} as Window
+      w['obj'] = {
+        describe: (val: any) => (val === undefined ? 'was-undef' : 'not-undef'),
+      }
+
+      const actual = await fetcher(w, 'obj.describe(undefined)')
+      expect(actual).toStrictEqual(['was-undef'])
+    })
+
+    it('passes bare identifier argument as string', async () => {
+      const w = {} as Window
+      w['obj'] = {
+        echo: (val: any) => String(val),
+      }
+
+      const actual = await fetcher(w, 'obj.echo(someVar)')
+      expect(actual).toStrictEqual(['someVar'])
+    })
   })
 })
