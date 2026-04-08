@@ -104,7 +104,7 @@ jobs:
         uses: conventional-actions/create-release@c025b7306d14a25901b72486f97f3ebe7662a8ed # v1.0.31
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          artifacts: "*"
+          artifacts: ""
 
 concurrency:
   cancel-in-progress: true
