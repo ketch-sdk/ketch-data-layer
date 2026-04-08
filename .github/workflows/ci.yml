@@ -1,68 +1,109 @@
-name: Build
+name: CI
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-      version-major: ${{ steps.version.outputs.version-major-only }}
-      version-minor: ${{ format('{0}.{1}', steps.version.outputs.version-major-only, steps.version.outputs.version-minor-only) }}
-      version-patch: ${{ format('{0}.{1}.{2}', steps.version.outputs.version-major-only, steps.version.outputs.version-minor-only, steps.version.outputs.version-patch-only) }}
+
     permissions:
       contents: read
-      id-token: write
+
+    strategy:
+      matrix:
+        node-version:
+          - 20.x
+          - 22.x
+
+    name: Node ${{ matrix.node-version }}
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-      - name: Generate next version
-        id: version
-        uses: conventional-actions/next-version@1b3e4803a0bdf7435ba7bb5ace077445ed54e82a # v1.1.8
-      - name: Setup Node
-        uses: actions/setup-node@v3
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: 20
-          cache: "npm"
-          registry-url: https://registry.npmjs.com/
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
       - name: Setup npmrc for ketch-com
-        uses: conventional-actions/setup-npmrc@v1
+        uses: conventional-actions/setup-npmrc@fe8070df4c9863ba5f2f92ca274f037f6f89a060 # v2
         with:
           always-auth: true
           scope: ketch-com
           token: ${{ secrets.GH_TOKEN }}
-      - name: Setup Node version
-        uses: conventional-actions/write-version@v1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run all targets
+        run: npm run all
+
+  release:
+    needs: build
+
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Generate next version
+        id: version
+        uses: conventional-actions/next-version@1b3e4803a0bdf7435ba7bb5ace077445ed54e82a # v1.1.8
+
+      - name: Setup Node
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Setup npmrc for ketch-com
+        uses: conventional-actions/setup-npmrc@fe8070df4c9863ba5f2f92ca274f037f6f89a060 # v2
+        with:
+          always-auth: true
+          scope: ketch-com
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Set package version
+        uses: conventional-actions/write-version@79f3c61ea301386f4dcfdfc700827f87fc2add2a # v2
         with:
           output_path: package.json
           version: ${{ format('{0}.{1}.{2}', steps.version.outputs.version-major-only, steps.version.outputs.version-minor-only, steps.version.outputs.version-patch-only) }}
+
       - name: Install dependencies
         run: npm ci
+
       - name: Run all targets
         run: npm run all
-      - name: Publish
-        run: npm publish --provenance --access public
 
-  release:
-    name: Release
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
+      - name: Publish (npmjs) via Trusted Publishing
+        run: |
+          unset NPM_CONFIG_USERCONFIG
+          npm publish --provenance --access public --registry https://registry.npmjs.org/
+
       - name: Create Release
         uses: conventional-actions/create-release@c025b7306d14a25901b72486f97f3ebe7662a8ed # v1.0.31
         with:
-          tag_name: ${{ needs.build.outputs.version }}
+          tag_name: ${{ steps.version.outputs.version }}
           artifacts: "*"
 
 concurrency:
