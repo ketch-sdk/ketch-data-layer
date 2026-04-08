@@ -1,0 +1,83 @@
+name: PR Labeler
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Label PR based on conventional commits
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const title = pr.title.toLowerCase();
+            const body = (pr.body || '').toLowerCase();
+
+            const labelMappings = {
+              'feat':     ['enhancement'],
+              'feature':  ['enhancement'],
+              'fix':      ['bug'],
+              'docs':     ['documentation'],
+              'refactor': ['refactor'],
+              'chore':    ['chore'],
+              'ci':       ['ci'],
+              'build':    ['chore'],
+              'vendor':   ['vendor'],
+              'security': ['security'],
+              'deps':     ['dependencies'],
+              'revert':   ['revert']
+            };
+
+            const labelsToAdd = new Set();
+
+            for (const [pattern, labels] of Object.entries(labelMappings)) {
+              const regex = new RegExp(`^${pattern}(!?[:(])`);
+              if (regex.test(title)) {
+                labels.forEach(label => labelsToAdd.add(label));
+              }
+            }
+
+            const titleHasBang = /^[a-z]+(\(.+\))?!:/.test(title);
+            const bodyHasBreaking = body.includes('- [x] this pr contains a breaking change');
+
+            if (titleHasBang || bodyHasBreaking) {
+              labelsToAdd.add('breaking');
+            }
+
+            if (labelsToAdd.size > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: Array.from(labelsToAdd)
+              });
+            }
+
+            if (bodyHasBreaking && !titleHasBang) {
+              const marker = '<!-- breaking-title-warning -->';
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number
+              });
+              const hasWarning = comments.some(c => c.body.includes(marker));
+              if (!hasWarning) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  body: `${marker}\n⚠️ **Breaking change checkbox is checked but \`!\` is missing from the PR title.**\n\nAfter squash merge, only the PR title becomes the commit message. Add \`!\` so the version action triggers a major bump:\n\n\`\`\`\nfeat(scope)!: description\n\`\`\`\n\nWithout this, the release will be a minor/patch bump instead of major.`
+                });
+              }
+            }

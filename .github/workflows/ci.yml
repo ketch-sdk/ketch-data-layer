@@ -3,15 +3,11 @@ name: CI
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-
-permissions:
-  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     permissions:
       contents: read
@@ -55,6 +51,7 @@ jobs:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     permissions:
       contents: write
@@ -68,7 +65,7 @@ jobs:
 
       - name: Generate next version
         id: version
-        uses: conventional-actions/next-version@1b3e4803a0bdf7435ba7bb5ace077445ed54e82a # v1.1.8
+        uses: conventional-actions/next-version@e6adb7e8577b8e8f60dfdf508dcf892dc0eb078a # v2.0.0
 
       - name: Setup Node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
@@ -101,10 +98,9 @@ jobs:
           npm publish --provenance --access public --registry https://registry.npmjs.org/
 
       - name: Create Release
-        uses: conventional-actions/create-release@c025b7306d14a25901b72486f97f3ebe7662a8ed # v1.0.31
+        uses: conventional-actions/create-release@15eff1cb943449e032e3d0c4b2a50010b0017f40 # v2
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          artifacts: ""
 
 concurrency:
   cancel-in-progress: true
