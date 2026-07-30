@@ -189,7 +189,7 @@ export default class Watcher {
 
       case TraitType.TRAIT_TYPE_MANAGED:
         this._fetchers.set(name, (w: Window) =>
-          managedFetcher(w, attribute.variable).then(values =>
+          managedFetcher(w, attribute.variable, this._listenerOptions.managedCookieTtl).then(values =>
             encoding(values)
               .map(structure)
               .map(values => extractValue(values, key)),
