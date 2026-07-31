@@ -14,6 +14,7 @@ jobs:
 
     permissions:
       contents: read
+      packages: read
 
     strategy:
       matrix:
@@ -40,7 +41,9 @@ jobs:
         with:
           always-auth: true
           scope: ketch-com
-          token: ${{ secrets.GH_TOKEN }}
+          # GH_TOKEN is not available in this repo's pull_request context; the
+          # workflow token can download the public ketch-com packages.
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
         run: npm ci
