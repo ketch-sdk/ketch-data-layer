@@ -481,4 +481,30 @@ describe('watcher', () => {
       })
     })
   })
+
+  describe('managedCookieTtl option', () => {
+    it('passes the configured ttl through to the managed cookie write', async () => {
+      let cookie = ''
+      jest.spyOn(window.document, 'cookie', 'get').mockImplementation(() => cookie)
+      const cookieSet = jest.spyOn(window.document, 'cookie', 'set')
+      cookieSet.mockImplementation((value: string) => {
+        cookie = value
+      })
+
+      const watcher = new Watcher(window, { managedCookieTtl: 30 * 86400 })
+      watcher.add('managed_idsp', {
+        type: TraitType.TRAIT_TYPE_MANAGED,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
+        variable: 'managed_idsp',
+      })
+
+      await watcher.start()
+
+      const swbWrite = cookieSet.mock.calls.map(c => c[0]).find(v => v.startsWith('_swb='))
+      expect(swbWrite).toBeDefined()
+      const expires = new Date(swbWrite?.match(/expires=([^;]+)/)?.[1] ?? '').getTime()
+      expect(expires).toBeGreaterThan(Date.now() + 29 * 86400 * 1000)
+      expect(expires).toBeLessThan(Date.now() + 31 * 86400 * 1000)
+    })
+  })
 })

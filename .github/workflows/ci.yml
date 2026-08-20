@@ -32,13 +32,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
 
-      - name: Setup npmrc for ketch-com
-        uses: conventional-actions/setup-npmrc@fe8070df4c9863ba5f2f92ca274f037f6f89a060 # v2
-        with:
-          always-auth: true
-          scope: ketch-com
-          token: ${{ secrets.GH_TOKEN }}
-
       - name: Install dependencies
         run: npm ci
 
@@ -72,13 +65,6 @@ jobs:
         with:
           node-version: lts/*
           cache: npm
-
-      - name: Setup npmrc for ketch-com
-        uses: conventional-actions/setup-npmrc@fe8070df4c9863ba5f2f92ca274f037f6f89a060 # v2
-        with:
-          always-auth: true
-          scope: ketch-com
-          token: ${{ secrets.GH_TOKEN }}
 
       - name: Set package version
         uses: conventional-actions/write-version@79f3c61ea301386f4dcfdfc700827f87fc2add2a # v2
