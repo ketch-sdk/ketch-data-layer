@@ -1,5 +1,5 @@
 import { fetcher } from './index'
-import { NativeBridge } from './fetcher'
+import { NativeBridge } from '../listener'
 
 function makeBridge(overrides: Partial<NativeBridge> = {}): NativeBridge {
   return {

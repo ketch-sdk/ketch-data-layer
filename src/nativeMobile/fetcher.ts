@@ -1,15 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
 import withTimeout from '../withTimeout'
+import { NativeBridge } from '../listener'
 
 const NATIVE_BRIDGE_TIMEOUT_MS = 2000
 
-export type NativeBridge = {
-  get: (key: string) => Promise<string | undefined>
-  put: (key: string, value: string) => void
-}
-
 // One in-flight promise per key, so a slow poll can't start (and mint) a second
-// time before the first one lands.
+// time before the first one lands. Keyed by name only, on the assumption of one
+// bridge per page — if that ever changes, this needs to key on the bridge too.
 const inFlight = new Map<string, Promise<any[]>>()
 
 async function getOrMint(name: string, bridge: NativeBridge): Promise<any[]> {
