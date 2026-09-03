@@ -25,11 +25,7 @@ async function getOrMint(name: string, bridge: NativeBridge): Promise<any[]> {
   return [minted]
 }
 
-export default async function nativeMobileFetcher(
-  w: Window,
-  name: string,
-  bridge?: NativeBridge,
-): Promise<any[]> {
+export default async function nativeMobileFetcher(w: Window, name: string, bridge?: NativeBridge): Promise<any[]> {
   if (!w || name.length === 0 || !bridge) {
     return []
   }
