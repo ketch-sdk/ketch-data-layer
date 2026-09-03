@@ -7,6 +7,7 @@ import { fetcher as localStorageFetcher } from '../localStorage'
 import { fetcher as sessionStorageFetcher } from '../sessionStorage'
 import { fetcher as queryStringFetcher } from '../queryString'
 import { fetcher as managedFetcher } from '../managed'
+import { fetcher as nativeMobileFetcher } from '../nativeMobile'
 import { structure as stringStructure } from '../string'
 import { structure as jsonStructure } from '../json'
 import { structure as jwtStructure } from '../jwt'
@@ -190,6 +191,16 @@ export default class Watcher {
       case TraitType.TRAIT_TYPE_MANAGED:
         this._fetchers.set(name, (w: Window) =>
           managedFetcher(w, attribute.variable, this._listenerOptions.managedCookieTtl).then(values =>
+            encoding(values)
+              .map(structure)
+              .map(values => extractValue(values, key)),
+          ),
+        )
+        break
+
+      case TraitType.TRAIT_TYPE_NATIVE_MOBILE:
+        this._fetchers.set(name, (w: Window) =>
+          nativeMobileFetcher(w, attribute.variable, this._listenerOptions.nativeBridge).then(values =>
             encoding(values)
               .map(structure)
               .map(values => extractValue(values, key)),
