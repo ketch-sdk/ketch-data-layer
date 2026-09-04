@@ -507,4 +507,29 @@ describe('watcher', () => {
       expect(expires).toBeLessThan(Date.now() + 31 * 86400 * 1000)
     })
   })
+
+  describe('nativeBridge option', () => {
+    it('mints via the bridge and emits the identity when nothing is stored', async () => {
+      const bridge = {
+        get: jest.fn().mockResolvedValue(undefined),
+        put: jest.fn(),
+      }
+
+      const watcher = new Watcher(window, { nativeBridge: bridge })
+      const identities: Record<string, string>[] = []
+      watcher.on(TraitName.IDENTITY, (attrs: Record<string, string>) => identities.push(attrs))
+
+      watcher.add('managed_idsp', {
+        type: TraitType.TRAIT_TYPE_NATIVE_MOBILE,
+        format: TraitFormat.TRAIT_FORMAT_STRING,
+        variable: 'swb_app1',
+      })
+
+      await watcher.start()
+
+      expect(bridge.put).toHaveBeenCalledWith('swb_app1', '123456789')
+      expect(identities).toHaveLength(1)
+      expect(identities[0].managed_idsp).toBe('123456789')
+    })
+  })
 })
