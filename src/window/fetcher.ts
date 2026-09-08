@@ -1,10 +1,22 @@
-export default async function windowFetcher(w: Window, name: string): Promise<any[]> {
+export type WindowFetcherOptions = {
+  /**
+   * Return plain-object values as-is instead of stringifying them, so a JSON-format
+   * structure can read nested keys. Off by default: a stringified object is dropped.
+   */
+  preserveObjects?: boolean
+}
+
+export default async function windowFetcher(
+  w: Window,
+  name: string,
+  options: WindowFetcherOptions = {},
+): Promise<any[]> {
   if (!w || name.length === 0) {
     return []
   }
 
   try {
-    const pv = getProperty(w, name)
+    const pv = getProperty(w, name, options)
     if (!pv || pv === '0') {
       return []
     }
@@ -80,7 +92,11 @@ function parseFunctionCall(part: string): { name: string; args: any[] } | null {
   return { name, args: splitArgs(rawArgs).map(parseArg) }
 }
 
-function getProperty(w: Window, p: string): string | null {
+function isPlainObject(v: any): boolean {
+  return Object.prototype.toString.call(v) === '[object Object]'
+}
+
+function getProperty(w: Window, p: string, options: WindowFetcherOptions): any {
   const parts: string[] = splitPath(p)
   let context: any = w
   let previousContext: any = null
@@ -108,6 +124,10 @@ function getProperty(w: Window, p: string): string | null {
     } else {
       return null
     }
+  }
+
+  if (options.preserveObjects && isPlainObject(context)) {
+    return context
   }
 
   if (context && typeof context !== 'string') {

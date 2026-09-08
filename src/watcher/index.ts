@@ -149,8 +149,11 @@ export default class Watcher {
         break
 
       case TraitType.TRAIT_TYPE_WINDOW:
+        // JSON-format traits need the live object so the dot-notation key can be read from it.
         this._fetchers.set(name, (w: Window) =>
-          windowFetcher(w, attribute.variable).then(values =>
+          windowFetcher(w, attribute.variable, {
+            preserveObjects: attribute.format === TraitFormat.TRAIT_FORMAT_JSON,
+          }).then(values =>
             encoding(values)
               .map(structure)
               .map(values => extractValue(values, key)),

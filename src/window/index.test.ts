@@ -295,5 +295,71 @@ describe('window', () => {
       const actual = await fetcher(w, 'obj.echo(someVar)')
       expect(actual).toStrictEqual(['someVar'])
     })
+
+    describe('preserveObjects', () => {
+      it('returns a plain object as-is', async () => {
+        const w = {} as Window
+        w['vzdl'] = { user: { id: 'test-123' } }
+
+        const actual = await fetcher(w, 'window.vzdl', { preserveObjects: true })
+        expect(actual).toStrictEqual([{ user: { id: 'test-123' } }])
+      })
+
+      it('returns a nested object from a dotted path', async () => {
+        const w = {} as Window
+        w['vzdl'] = { user: { id: 'test-123' } }
+
+        const actual = await fetcher(w, 'vzdl.user', { preserveObjects: true })
+        expect(actual).toStrictEqual([{ id: 'test-123' }])
+      })
+
+      it('returns an object returned from a function call', async () => {
+        const w = {} as Window
+        w['getUser'] = () => ({ id: 'test-123' })
+
+        const actual = await fetcher(w, 'getUser()', { preserveObjects: true })
+        expect(actual).toStrictEqual([{ id: 'test-123' }])
+      })
+
+      it('still returns empty list for an array', async () => {
+        const w = {} as Window
+        w['foo'] = []
+
+        const actual = await fetcher(w, 'foo', { preserveObjects: true })
+        expect(actual).toStrictEqual([])
+      })
+
+      it('still returns a string value unchanged', async () => {
+        const w = {} as Window
+        w['foo'] = 'bar'
+
+        const actual = await fetcher(w, 'foo', { preserveObjects: true })
+        expect(actual).toStrictEqual(['bar'])
+      })
+
+      it('still returns string form of a numeric value', async () => {
+        const w = {} as Window
+        w['foo'] = 42
+
+        const actual = await fetcher(w, 'foo', { preserveObjects: true })
+        expect(actual).toStrictEqual(['42'])
+      })
+
+      it('still drops zero values', async () => {
+        const w = {} as Window
+        w['zeroString'] = '0'
+        w['zeroNumber'] = 0
+
+        expect(await fetcher(w, 'zeroString', { preserveObjects: true })).toStrictEqual([])
+        expect(await fetcher(w, 'zeroNumber', { preserveObjects: true })).toStrictEqual([])
+      })
+
+      it('still returns empty list for a missing property', async () => {
+        const w = {} as Window
+
+        const actual = await fetcher(w, 'vzdl.user', { preserveObjects: true })
+        expect(actual).toStrictEqual([])
+      })
+    })
   })
 })
