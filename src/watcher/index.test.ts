@@ -344,6 +344,84 @@ describe('watcher', () => {
     })
   })
 
+  describe('window JSON traits', () => {
+    // Runs one watcher pass and returns what was emitted. returnEarly forces an emit
+    // even when nothing was collected so absence can be asserted.
+    async function collect(type: TraitName, name: string, trait: Trait): Promise<Record<string, string>> {
+      const watcher = new Watcher(window)
+      watcher.add(name, trait)
+      const listener = jest.fn()
+      watcher.addListener(type, listener)
+      await watcher.start(type, true)
+      expect(listener).toHaveBeenCalledTimes(1)
+      return listener.mock.calls[0][0]
+    }
+
+    const cases: [string, TraitName][] = [
+      ['identity', TraitName.IDENTITY],
+      ['userAttribute', TraitName.USER_ATTRIBUTE],
+    ]
+
+    describe.each(cases)('%s', (_label, traitName) => {
+      afterEach(() => {
+        const w = window as any
+        delete w['vzdl']
+        delete w['vzdl_json_string']
+      })
+
+      it('resolves a nested key from an object-valued global', async () => {
+        const w = window as any
+        w.vzdl = { user: { id: 'test-123' } }
+
+        const actual = await collect(traitName, 'customer_id', {
+          type: TraitType.TRAIT_TYPE_WINDOW,
+          format: TraitFormat.TRAIT_FORMAT_JSON,
+          variable: 'window.vzdl',
+          key: 'user.id',
+        })
+        expect(actual).toStrictEqual({ customer_id: 'test-123' })
+      })
+
+      it('yields undefined for a key missing from an object-valued global', async () => {
+        const w = window as any
+        w.vzdl = { user: { id: 'test-123' } }
+
+        const actual = await collect(traitName, 'customer_id', {
+          type: TraitType.TRAIT_TYPE_WINDOW,
+          format: TraitFormat.TRAIT_FORMAT_JSON,
+          variable: 'window.vzdl',
+          key: 'user.missing',
+        })
+        expect(actual).toStrictEqual({ customer_id: 'undefined' })
+      })
+
+      it('still resolves a nested key from a global holding a JSON string', async () => {
+        const w = window as any
+        w.vzdl_json_string = JSON.stringify({ user: { id: 'test-456' } })
+
+        const actual = await collect(traitName, 'customer_id', {
+          type: TraitType.TRAIT_TYPE_WINDOW,
+          format: TraitFormat.TRAIT_FORMAT_JSON,
+          variable: 'window.vzdl_json_string',
+          key: 'user.id',
+        })
+        expect(actual).toStrictEqual({ customer_id: 'test-456' })
+      })
+
+      it('does not collect an object-valued global with string format', async () => {
+        const w = window as any
+        w.vzdl = { user: { id: 'test-123' } }
+
+        const actual = await collect(traitName, 'customer_id', {
+          type: TraitType.TRAIT_TYPE_WINDOW,
+          format: TraitFormat.TRAIT_FORMAT_STRING,
+          variable: 'window.vzdl',
+        })
+        expect(actual).toStrictEqual({})
+      })
+    })
+  })
+
   describe('JWT verifierID functionality', () => {
     const testJWT =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwi' +
