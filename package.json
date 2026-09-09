@@ -49,7 +49,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@ketch-com/ketch-cookie": "^1.0.23",
+    "@ketch-com/ketch-cookie": "^1.0.24",
     "@ketch-sdk/ketch-logging": "^1.2.0",
     "@ketch-sdk/ketch-types": "^1.123.0",
     "events": "^3.3.0",
