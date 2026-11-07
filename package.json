@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "description": "Ketch Data Layer interface",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
-  "type": "commonjs",
+  "sideEffects": false,
   "scripts": {
     "all": "npm run lint && npm run format-check && npm run test && npm run build && npm run docs",
-    "build": "tsc -p .",
+    "build": "tsc -p . && npm run build:lib:esm && node scripts/check-esm.js",
+    "build:lib:esm": "tsc -p tsconfig.esm.json",
     "format": "prettier --write \"**/*.{ts,tsx,yml,yaml}\"",
     "format-check": "prettier --check '**/*.ts'",
     "lint": "eslint src/**/*.ts",
@@ -29,7 +31,6 @@
   "author": "Ketch Kloud, Inc.",
   "license": "MIT",
   "devDependencies": {
-    "@types/events": "^3.0.0",
     "@types/jest": "^29.5.0",
     "@types/nano-equal": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
@@ -52,17 +53,14 @@
     "@ketch-com/ketch-cookie": "^1.0.24",
     "@ketch-sdk/ketch-logging": "^1.2.0",
     "@ketch-sdk/ketch-types": "^1.123.0",
-    "events": "^3.3.0",
     "nano-equal": "^2.0.2",
-    "tslib": "^2.5.0",
-    "uuid": "^11.1.1"
+    "tslib": "^2.5.0"
   },
   "files": [
     "dist/"
   ],
   "overrides": {
     "form-data": "^4.0.4",
-    "brace-expansion": "^2.0.2",
-    "uuid": "^11.1.1"
+    "brace-expansion": "^2.0.2"
   }
 }

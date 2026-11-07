@@ -11,7 +11,7 @@ import {
   TraitName,
 } from '@ketch-sdk/ketch-types'
 
-jest.mock('uuid', () => ({ v4: () => '123456789' }))
+jest.mock('../uuid', () => ({ uuidv4: () => '123456789' }))
 
 describe('watcher', () => {
   it('starts', () => {
