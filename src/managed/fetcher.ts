@@ -1,5 +1,5 @@
 import { getCookie, setCookie } from '@ketch-com/ketch-cookie'
-import { v4 as uuidv4 } from 'uuid'
+import { uuidv4 } from '../uuid'
 
 const DEFAULT_MANAGED_IDENTITY_TTL = 400 * 86400
 

@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events'
+import Emitter from '../emitter'
 import { Identity, Traits, Trait, TraitFormat, TraitType, TraitEncoding, TraitName } from '@ketch-sdk/ketch-types'
 import { fetcher as cookieFetcher } from '../cookie'
 import { fetcher as dataLayerFetcher } from '../dataLayer'
@@ -32,7 +32,7 @@ export default class Watcher {
   private _intervalId?: number
   private _fetchers: Map<string, (w: Window) => Promise<string[]>>
   private _attributes: Traits
-  private _emitter: EventEmitter
+  private _emitter: Emitter
 
   /**
    * Create a new Watcher.
@@ -41,7 +41,7 @@ export default class Watcher {
    * @param options The listener options
    */
   constructor(w: Window, options: ListenerOptions = {}) {
-    this._emitter = new EventEmitter()
+    this._emitter = new Emitter()
     this._w = w
     this._listenerOptions = options
     this._fetchers = new Map<string, (w: Window) => Promise<string[]>>()
